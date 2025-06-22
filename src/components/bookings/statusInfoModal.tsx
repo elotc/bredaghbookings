@@ -2,7 +2,7 @@ export default function StatusInfoModal({ open, onClose }: { open: boolean; onCl
     if (!open) return null;
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="bg-gray-100 rounded-lg shadow-lg p-6 max-w-sm w-full">
+            <div className="rounded-lg shadow-lg p-6 max-w-sm w-full">
                 <h2 className="text-lg font-bold mb-4">Slot Status Colors</h2>
                 <ul className="space-y-4">
                     <li className="flex items-center">
