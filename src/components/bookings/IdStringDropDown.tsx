@@ -1,7 +1,7 @@
-import { BookingType } from "@/app/bookings/bookingsPage";
 
-const labelClass = "block text-sm font-medium text-gray-500";
-const inputClass = "mt-1 block w-full rounded-md border-gray-300 shadow-sm";
+export const labelClass = "block text-sm font-medium text-gray-500";
+export const inputClass = "mt-1 block w-full rounded-md border-gray-300 shadow-sm";
+
 
 export function DropDownList({
     label,
@@ -34,25 +34,4 @@ export function DropDownList({
     );
 };
 
-export function SelectDate({
-    selectedDate,
-    setSelectedDate
-}: {
-    selectedDate: string;
-    setSelectedDate: (date: string) => void;
-}) {
-    return (
-        <div>
-            <label htmlFor="date" className={labelClass}>
-                Date
-            </label>
-            <input
-                type="date"
-                id="date"
-                value={selectedDate}
-                onChange={e => setSelectedDate(e.target.value)}
-                className={inputClass}
-            />
-        </div>
-    );
-};
+

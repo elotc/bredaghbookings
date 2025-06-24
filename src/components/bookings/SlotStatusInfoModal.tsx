@@ -18,7 +18,7 @@ export default function StatusInfoModal({ open, onClose }: { open: boolean; onCl
                     <li className="flex items-center">
                         <span className="inline-block w-1/12 w-4 h-4 rounded bg-yellow-300 border border-yellow-400 mr-2"></span>
                         <span className="w-3/12 font-medium">Requested</span>
-                        <span className="w-8/12">A booking requested has already been submitted for this slot and is pending approval</span>
+                        <span className="w-8/12">A booking request has already been submitted for this slot and is pending approval</span>
                     </li>
                     <li className="flex items-center">
                         <span className="inline-block w-1/12 w-4 h-4 rounded bg-red-500 border border-red-600 mr-2"></span>

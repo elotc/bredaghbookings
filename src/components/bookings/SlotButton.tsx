@@ -1,32 +1,13 @@
-import { SlotStatus } from "@/app/bookings/bookingsPage";
-import { InformationCircleIcon } from "@heroicons/react/16/solid";
-
-export function InfoButton({
-    onClick
-}: {
-    onClick: () => void;
-}) {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            className="mb-1 px-1 py-1 rounded bg-blue-100 text-blue-800 hover:bg-blue-200 flex items-center gap-1"
-        >
-            <InformationCircleIcon className="w-5 h-5" aria-hidden="true" />
-        </button>
-    );
-}
+import { SlotPart, SlotStatus } from "@/data/bookings/definitions";
 
 export function SlotButton({
     id,
-    status,
-    btnLabel,
+    slotDetails,
     selectedSlots,
     onClick
 }: {
     id: string;
-    status: SlotStatus;
-    btnLabel: string;
+    slotDetails: SlotPart
     selectedSlots: string[];
     onClick: () => void;
 }) {
@@ -48,6 +29,9 @@ export function SlotButton({
         }
     }
 
+    let status = slotDetails.status;
+    let btnLabel = slotDetails.displayTeamName || slotDetails.status;
+
     return (
         <div>
             <button
@@ -56,13 +40,20 @@ export function SlotButton({
                 disabled={
                     [SlotStatus.CLOSED, SlotStatus.BOOKED, SlotStatus.REQUESTED].includes(status)
                 }
-                className={`w-2/5 min-w-[120px] py-1 px-3 rounded border text-sm flex items-center justify-center 
+                className={`w-2/5 min-w-[120px] max-w-[120px] py-1 px-3 rounded border text-sm flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap
                     ${getStatusClasses(status, selectedSlots.includes(`${id}`))} ${[SlotStatus.CLOSED, SlotStatus.BOOKED, SlotStatus.REQUESTED].includes(status)
                     ? "opacity-60 cursor-not-allowed"
                     : ""
                     }`}
+                style={{ width: "120px" }}
+                title={btnLabel || status}
             >
-                <span className="mx-auto">{btnLabel || status}</span>
+                <span
+                    className="mx-auto overflow-hidden text-ellipsis whitespace-nowrap block w-full text-center"
+                    style={{ direction: "rtl", textAlign: "left" }}
+                >
+                    {btnLabel || status}
+                </span>
                 {selectedSlots.includes(`${id}`) && (
                     <span className="ml-2 text-sm" aria-label="selected">✔️</span>
                 )}
@@ -70,5 +61,3 @@ export function SlotButton({
         </div>
     );
 }
-
-
