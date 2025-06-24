@@ -109,12 +109,7 @@ export default function Bookings() {
                     <button
                         type="button"
                         className="px-4 py-2 rounded bg-[#003366] text-[#FFD700] font-semibold hover:bg-[#002244] hover:text-yellow-300 transition-colors"
-                        onClick={() => {
-                            setSelectedSlots([]);
-                            setSelectedLocation(locations[0].id);
-                            setSelectedFacility(facilities[0].id);
-                            setSelectedDate(new Date().toISOString().split("T")[0]); // Reset to today
-                        }}
+                        onClick={() => router.push("/bredagh")}
                     >
                         Cancel
                     </button>
