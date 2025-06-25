@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tolemics App",
-  description: "Demo app for Tolemic",
+  title: "Breadagh App",
+  description: "Demo app for Breadagh",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
