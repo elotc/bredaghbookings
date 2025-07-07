@@ -53,3 +53,10 @@ export type TimeSlot = {
     part2: SlotPart;
 };
 
+export type User = {
+    id: string;
+    name: string | null;
+    email: string | null;
+    status: string;
+};
+

@@ -1,6 +1,6 @@
 import { db } from '@/data/dbConn';
 import { eq, gt, lt, sql } from 'drizzle-orm';
-import { users as usersTable, accounts as accountsTable, sessions as sessionsTable, authenticators as authsTable, verificationTokens as tokensTable} from '@/data/schema';
+import { users as usersTable, accounts as accountsTable, sessions as sessionsTable, authenticators as authsTable, verificationTokens as tokensTable} from '@/data/bookings/schema';
 
 export async function getUsers() {
     const users = await db.select().from(usersTable);
@@ -21,6 +21,7 @@ export async function createUser(name: string, email: string) {
     const user: typeof usersTable.$inferInsert = {
         name: name,
         email: email,
+        status: 'Pending',
     };
     await db.insert(usersTable).values(user);
     console.log('New user created!')
