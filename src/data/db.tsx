@@ -37,6 +37,16 @@ export async function updateUser(name: string, email: string) {
     console.log('User info updated!')
 }
 
+export async function setUserActive(email: string) {
+    await db
+      .update(usersTable)
+      .set({
+        status: 'Active',
+      })
+      .where(eq(usersTable.email, email));
+    console.log('User status updated to active!')
+}
+
 export async function deleteUser(id: string) {
     await db.delete(usersTable).where(eq(usersTable.id, id));
     console.log('User deleted!')

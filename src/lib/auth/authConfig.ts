@@ -4,6 +4,7 @@ import { db } from '@/data/dbConn';
 import Resend from "next-auth/providers/resend";
 import Google from "next-auth/providers/google";
 import { clearStaleTokens } from "@/lib/auth/clearStaleTokenServerAction";
+import { setUserActive } from "@/data/db";
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -29,8 +30,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     callbacks: {
         async jwt( {token,user} ) {
             console.log("jwt callback", {user, token});
-            if( user) {
+            if( user ) {
+                console.log(user);
                 await clearStaleTokens();
+                if(user.email ) {
+                    await setUserActive(user.email);
+                }
                 return {
                     ...token,
                     id: user.id, 
