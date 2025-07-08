@@ -7,13 +7,13 @@ export default async function Page() {
 
     const isAuthenticated = await checkIsAuthenticated();
     
-    // if (!isAuthenticated) {
-    //     redirect("/auth/sign-in");
-    // } else {
+    if (!isAuthenticated) {
+         redirect("/auth/sign-in");
+    } else {
         return(
             <Bookings />
         );
-    // }
+    }
 }
 
 

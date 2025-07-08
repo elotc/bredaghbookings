@@ -1,10 +1,22 @@
 import { db } from '@/data/dbConn';
 import { eq, gt, lt, sql } from 'drizzle-orm';
 import { users as usersTable, accounts as accountsTable, sessions as sessionsTable, authenticators as authsTable, verificationTokens as tokensTable} from '@/data/bookings/schema';
+import email from '@auth/core/providers/email';
 
 export async function getUsers() {
     const users = await db.select().from(usersTable);
     // console.log('Getting all users from the database: ', users)
+    return users;
+}
+
+export async function getUserEmails() {
+    const emails = await db.select({email: usersTable.email}).from(usersTable);
+    // console.log('Getting all users from the database: ', users)
+    return emails;
+}
+
+export async function getUserById(id: string) {
+    const users = await db.select().from(usersTable).where(eq(usersTable.id, id));
     return users;
 }
 
@@ -27,14 +39,20 @@ export async function createUser(name: string, email: string) {
     console.log('New user created!')
 }
 
-export async function updateUser(name: string, email: string) {
+export async function updateUser(
+    id: string,
+    updates: Partial<{ name: string; email: string; status: 'Active' | 'Pending' | 'Archived' }>
+) {
+    const user: typeof usersTable.$inferInsert = {
+        name: updates.name || '',
+        email: updates.email || '',
+        status: updates.status ?? 'Pending',
+    };
     await db
-      .update(usersTable)
-      .set({
-        name: name,
-      })
-      .where(eq(usersTable.email, email));
-    console.log('User info updated!')
+        .update(usersTable)
+        .set(updates)
+        .where(eq(usersTable.id, id));
+    console.log('User info updated!');
 }
 
 export async function setUserActive(email: string) {
@@ -79,3 +97,4 @@ export async function getTokens() {
 export async function deleteStaleTokens() {
     await db.delete(tokensTable).where(lt(tokensTable.expires, sql`now()`));
 }
+

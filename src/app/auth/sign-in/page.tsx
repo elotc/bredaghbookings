@@ -7,7 +7,7 @@ export default async function Page() {
     const isAuthenticated = await checkIsAuthenticated();
 
     if (isAuthenticated) {
-        redirect("/bookings");
+        redirect("/");
     } else {
         return (
             <SignInPage></SignInPage>

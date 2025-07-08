@@ -1,6 +1,6 @@
 
 import { redirect } from "next/navigation";
-import Dashboard from "@/app/dashboard/dashboardPage";
+import Dashboard from "@/app/(dashboard)/dashboardPage";
 import { checkIsAuthenticated } from "@/lib/auth/checkIsAuthenticated";
 
 export default async function Page() {

@@ -1,3 +1,4 @@
+"use server";
 
 import UserTable from "@/components/admin/UserTable";
 import { getUsers } from "@/data/db";
@@ -8,7 +9,7 @@ export default async function AdminPage() {
 
     return (
         <div>
-            <h1>User Admin</h1>
+            <h2>User Admin</h2>
             <UserTable users={users} />
         </div>
     );

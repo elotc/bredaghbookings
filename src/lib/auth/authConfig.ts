@@ -29,9 +29,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     ],
     callbacks: {
         async jwt( {token,user} ) {
-            console.log("jwt callback", {user, token});
+            //console.log("jwt callback", {user, token});
             if( user ) {
-                console.log(user);
                 await clearStaleTokens();
                 if(user.email ) {
                     await setUserActive(user.email);
@@ -44,7 +43,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return token;
         },
         async session({session,token}){
-            console.log("session callback", {session, token});
+            //console.log("session callback", {session, token});
             return {
                 ...session,
                 user: {

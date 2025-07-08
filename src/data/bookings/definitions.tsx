@@ -60,3 +60,9 @@ export type User = {
     status: string;
 };
 
+export enum EmailType {
+    INVITE = "Invite",
+    BOOKING_SUBMITTED = "BookingSubmitted",
+    BOOKING_UPDATED = "BookingUpdated",
+}
+
