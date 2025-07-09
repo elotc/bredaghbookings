@@ -1,4 +1,4 @@
-import { db } from "./schema";
+import { db } from "@/data/dbConn";
 import { org } from "./schema";
 import { eq } from "drizzle-orm";
 
@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 
 // Get all orgs
 export async function getOrgs() {
+  console.log("Fetching all orgs");
   return db.select().from(org);
 }
 

@@ -162,138 +162,138 @@ export const orgRelations = relations(org, ({ one }) => ({
     }),
 }));
 
-// export const user_org = pgTable(
-//   "user_org",
-//   {
-//     user_id: text("user_id")
-//       .notNull()
-//       .references(() => users.id, { onDelete: "cascade" }),
-//     org_id: text("org_id")
-//       .notNull()
-//       .references(() => org.id, { onDelete: "cascade" }),
-//     status: userStatusEnum("status").notNull().default("Active"),
-//     role: userOrgRoleEnum("role").notNull().default("Viewer"),
-//   },
-//   (user_org) => [
-//     {
-//       compositePk: primaryKey({
-//         columns: [user_org.user_id, user_org.org_id],
-//       }),
-//     },
-//   ]
-// );
+export const user_org = pgTable(
+  "user_org",
+  {
+    user_id: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    org_id: serial("org_id")
+      .notNull()
+      .references(() => org.id, { onDelete: "cascade" }),
+    status: userStatusEnum("status").notNull().default("Active"),
+    role: userOrgRoleEnum("role").notNull().default("Viewer"),
+  },
+  (user_org) => [
+    {
+      compositePk: primaryKey({
+        columns: [user_org.user_id, user_org.org_id],
+      }),
+    },
+  ]
+);
 
-// export const booking_request = pgTable("booking_request", {
-//   booking_id: text("booking_id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-//   team_id: text("team_id")
-//     .notNull()
-//     .references(() => org.id, { onDelete: "cascade" }),
-//   grouping_id: text("grouping_id")
-//     .notNull()
-//     .references(() => org.id, { onDelete: "cascade" }),
-//   requestor_id: text("requestor_id")
-//     .notNull()
-//     .references(() => users.id, { onDelete: "cascade" }),
-//   approver_id: text("approver_id")
-//     .references(() => users.id, { onDelete: "set null" }),
-//   status: bookingRequestStatusEnum("status").notNull().default("Requested"),
-//   season_id: text("season_id"),
-//   event_type: bookingEventTypeEnum("event_type").notNull().default("Training"),
-//   booking_abbrev: text("booking_abbrev"),
-//   description: text("description"),
-//   ...timestamps,
-// })
+export const booking_request = pgTable("booking_request", {
+  booking_id: serial("booking_id").primaryKey(),
+  team_id: serial("team_id")
+    .notNull()
+    .references(() => org.id, { onDelete: "cascade" }),
+  grouping_id: serial("grouping_id")
+    .notNull()
+    .references(() => org.id, { onDelete: "cascade" }),
+  requestor_id: text("requestor_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  approver_id: text("approver_id")
+    .references(() => users.id, { onDelete: "set null" }),
+  status: bookingRequestStatusEnum("status").notNull().default("Requested"),
+  season_id: serial("season_id"),
+  event_type: bookingEventTypeEnum("event_type").notNull().default("Training"),
+  booking_abbrev: text("booking_abbrev"),
+  description: text("description"),
+  ...timestamps,
+});
 
-// export const location = pgTable("location", {
-//   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-//   name: text("name").notNull(),
-//   abbrev: text("abbrev").notNull(),
-//   club_id: text("club_id").references(() => org.id, { onDelete: "set null" }),
-//   team_id: text("team_id").references(() => org.id, { onDelete: "set null" }),
-//   ...timestamps,
-// });
+export const location = pgTable("location", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  abbrev: text("abbrev").notNull(),
+  club_id: serial("club_id").references(() => org.id, { onDelete: "set null" }),
+  team_id: serial("team_id").references(() => org.id, { onDelete: "set null" }),
+  ...timestamps,
+});
 
-// export const facility = pgTable("facility", {
-//   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-//   location_id: text("location_id")
-//     .notNull()
-//     .references(() => location.id, { onDelete: "cascade" }),
-//   slot_duration_mins: integer("slot_duration_mins").notNull(),
-//   concurrent_use_number: integer("concurrent_use_number").notNull().default(1),
-//   name: text("name").notNull(),
-//   abbrev: text("abbrev").notNull(),
-//   club_id: text("club_id").references(() => org.id, { onDelete: "set null" }),
-//   team_id: text("team_id").references(() => org.id, { onDelete: "set null" }),
-//   ...timestamps,
-// });
+export const facility = pgTable("facility", {
+  id: serial("id").primaryKey(),
+  location_id: serial("location_id")
+    .notNull()
+    .references(() => location.id, { onDelete: "cascade" }),
+  slot_duration_mins: integer("slot_duration_mins").notNull(),
+  concurrent_use_number: integer("concurrent_use_number").notNull().default(1),
+  name: text("name").notNull(),
+  abbrev: text("abbrev").notNull(),
+  club_id: serial("club_id").references(() => org.id, { onDelete: "set null" }),
+  team_id: serial("team_id").references(() => org.id, { onDelete: "set null" }),
+  ...timestamps,
+});
 
-// export const booking_facility = pgTable("booking_facility", {
-//   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-//   facility_id: text("facility_id")
-//     .notNull()
-//     .references(() => facility.id, { onDelete: "cascade" }),
-//   date: text("date").notNull(),
-//   start_time: text("start_time").notNull(),
-//   end_time: text("end_time").notNull(),
-//   status: bookingFacilityStatusEnum("status").notNull().default("Active"),
-//   abbrev: text("abbrev"),
-//   ...timestamps,
-// });
+export const booking_facility = pgTable("booking_facility", {
+  id: serial("id").primaryKey(),
+  facility_id: serial("facility_id")
+    .notNull()
+    .references(() => facility.id, { onDelete: "cascade" }),
+  date: text("date").notNull(),
+  start_time: text("start_time").notNull(),
+  end_time: text("end_time").notNull(),
+  status: bookingFacilityStatusEnum("status").notNull().default("Active"),
+  abbrev: text("abbrev"),
+  ...timestamps,
+});
 
-// export const booking_comment = pgTable("booking_comment", {
-//   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-//   comment: text("comment").notNull(),
-//   user_id: text("user_id")
-//     .notNull()
-//     .references(() => users.id, { onDelete: "cascade" }),
-//   booking_id: text("booking_id")
-//     .notNull()
-//     .references(() => booking_request.booking_id, { onDelete: "cascade" }),
-//   ...timestamps,
-// });
+export const booking_comment = pgTable("booking_comment", {
+  id: serial("id").primaryKey(),
+  comment: text("comment").notNull(),
+  user_id: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  booking_id: serial("booking_id")
+    .notNull()
+    .references(() => booking_request.booking_id, { onDelete: "cascade" }),
+  ...timestamps,
+});
 
-// export const season = pgTable("season", {
-//   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-//   start_datetime: timestamp("start_datetime", { mode: "date" }).notNull(),
-//   end_datetime: timestamp("end_datetime", { mode: "date" }).notNull(),
-//   name: text("name").notNull(),
-//   status: seasonStatusEnum("status").notNull().default("Open"),
-//   ...timestamps,
-// });
+export const season = pgTable("season", {
+  id: serial("id").primaryKey(),
+  start_datetime: timestamp("start_datetime", { mode: "date" }).notNull(),
+  end_datetime: timestamp("end_datetime", { mode: "date" }).notNull(),
+  name: text("name").notNull(),
+  status: seasonStatusEnum("status").notNull().default("Open"),
+  ...timestamps,
+});
 
-// export const schedule = pgTable("schedule", {
-//   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-//   name: text("name").notNull(),
-//   club_id: text("club_id").references(() => org.id, { onDelete: "set null" }),
-//   ...timestamps,
-// });
+export const schedule = pgTable("schedule", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  club_id: serial("club_id").references(() => org.id, { onDelete: "set null" }),
+  ...timestamps,
+});
 
-// export const schedule_blockout = pgTable("schedule_blockout", {
-//   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-//   schedule_id: text("schedule_id")
-//     .notNull()
-//     .references(() => schedule.id, { onDelete: "cascade" }),
-//   start_date: text("start_date").notNull(),
-//   end_date: text("end_date").notNull(),
-//   start_time: text("start_time").notNull(),
-//   end_time: text("end_time").notNull(),
-//   status: scheduleBlockoutStatusEnum("status").notNull().default("Closed"),
-//   ...timestamps,
-// });
+export const schedule_blockout = pgTable("schedule_blockout", {
+  id: serial("id").primaryKey(),
+  schedule_id: serial("schedule_id")
+    .notNull()
+    .references(() => schedule.id, { onDelete: "cascade" }),
+  start_date: text("start_date").notNull(),
+  end_date: text("end_date").notNull(),
+  start_time: text("start_time").notNull(),
+  end_time: text("end_time").notNull(),
+  status: scheduleBlockoutStatusEnum("status").notNull().default("Closed"),
+  ...timestamps,
+});
 
-// export const season_facility_schedule = pgTable("season_facility_schedule", {
-//   season_id: text("season_id")
-//     .notNull()
-//     .references(() => season.id, { onDelete: "cascade" }),
-//   facility_id: text("facility_id")
-//     .notNull()
-//     .references(() => facility.id, { onDelete: "cascade" }),
-//   schedule_id: text("schedule_id")
-//     .notNull()
-//     .references(() => schedule.id, { onDelete: "cascade" }),
-//   club_id: text("club_id")
-//     .references(() => org.id, { onDelete: "set null" }),
-// });
+export const season_facility_schedule = pgTable("season_facility_schedule", {
+  season_id: serial("season_id")
+    .notNull()
+    .references(() => season.id, { onDelete: "cascade" }),
+  facility_id: serial("facility_id")
+    .notNull()
+    .references(() => facility.id, { onDelete: "cascade" }),
+  schedule_id: serial("schedule_id")
+    .notNull()
+    .references(() => schedule.id, { onDelete: "cascade" }),
+  club_id: serial("club_id")
+    .references(() => org.id, { onDelete: "set null" }),
+});
 
 
 

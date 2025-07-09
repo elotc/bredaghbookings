@@ -7,6 +7,7 @@ import { BookingType } from "@/data/bookings/definitions";
 import { clubs, codes, teams, facilities, timeSlots } from "@/data/bookings/testdata";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import { createBookingAction } from "@/lib/bookings/BookingActions";
 
 
 export default function Bookings() {
@@ -36,7 +37,7 @@ export default function Bookings() {
         <main>
             <h2 className="mb-4 text-xl md:text-2xl">Confirm Booking</h2>
 
-            <form className="space-y-4 max-w-md">
+            <form action={createBookingAction} className="space-y-4 max-w-md">
                 <div>
                     <strong>Selected Slots for {facilityName} on {date}:</strong>
                     <ul>
@@ -89,11 +90,6 @@ export default function Bookings() {
                     <button
                         type="submit"
                         className="px-4 py-2 rounded bg-[#FFD700] text-[#003366] font-semibold hover:bg-yellow-400 hover:text-blue-900 transition-colors"
-                        onClick={e => {
-                            e.preventDefault();
-                            // Add your submit logic here
-                            alert("Booking confirmed!");
-                        }}
                     >
                         Submit
                     </button>

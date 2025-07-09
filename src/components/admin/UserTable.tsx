@@ -1,6 +1,6 @@
 
 import { User } from "@/data/bookings/definitions";
-import { CreateUser, DeleteUser, UpdateUser } from "./user/Buttons";
+import { CreateUser, DeleteUser, UpdateUser } from "@/components/admin/user/Buttons";
 
 export default function UserTable({ users }: { users: User[] }) {
 

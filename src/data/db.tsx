@@ -98,3 +98,16 @@ export async function deleteStaleTokens() {
     await db.delete(tokensTable).where(lt(tokensTable.expires, sql`now()`));
 }
 
+export async function getTableRowCounts() {
+    // This function assumes you are using PostgreSQL.
+    // It returns an array of objects: { table_name: string, row_count: number }
+    const result = await db.execute(
+        `SELECT table_name, 
+            (SELECT n_live_tup 
+             FROM pg_stat_user_tables 
+             WHERE relname = table_name) AS row_count 
+         FROM information_schema.tables 
+         WHERE table_schema = 'public';`
+    );
+    return result.rows || result; // Adjust depending on your db client
+}
