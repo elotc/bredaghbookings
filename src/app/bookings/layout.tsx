@@ -1,12 +1,11 @@
-import { dashboardLinks } from "@/components/dashboard/dashboardLinks";
-import LeftNav from "@/components/general/left-nav";
+import { BookingContextProvider } from "@/components/bookings/BookingContext";
 
-
-export default function BookingLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
   return (
-    <div className="flex min-h-screen">
-
-      <main className="flex-1 bg-gray-50 p-8">{children}</main>
+    <div className="flex min-h-screen min-w-full flex-col">
+      <BookingContextProvider>
+        {children}
+      </BookingContextProvider>
     </div>
   );
 }

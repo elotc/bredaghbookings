@@ -1,16 +1,17 @@
 "use server";
 
-import UserTable from "@/components/admin/UserTable";
-import { getUsers } from "@/data/db";
+import UserTable from "@/components/admin/user/UserTable";
+import { getAllOrgClubGrouping, getAllUsers, getOrgCountsPerUser } from "@/data/dataAccessLayer";
 
 
 export default async function AdminPage() {
-    const users = await getUsers();
+    const users = await getAllUsers();
+    const userOrgCounts = await getOrgCountsPerUser();
+    
 
     return (
         <div>
-            <h2>User Admin</h2>
-            <UserTable users={users} />
+            <UserTable users={users} userOrgCounts={userOrgCounts} />
         </div>
     );
 }

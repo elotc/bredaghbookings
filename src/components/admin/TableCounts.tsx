@@ -1,5 +1,5 @@
 
-import { getUsers, getTableRowCounts } from "@/data/db";
+import { getAllUsers, getTableRowCounts } from "@/data/dataAccessLayer";
 
 export default async function TableCounts() {
     const rowCounts = await getTableRowCounts();

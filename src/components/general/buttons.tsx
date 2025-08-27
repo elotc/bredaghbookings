@@ -1,19 +1,30 @@
-import clsx from 'clsx';
+"use client";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
+import { loadBaseData, loadTestData } from '@/data/basedata';
+import { useState } from 'react';
+
+const btnClass = "m-4 px-4 py-2 rounded bg-[#003366] text-[#FFD700] font-semibold hover:bg-[#002244] hover:text-yellow-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+
+export function LoadBaseDataBtn() {
+    return (
+        <form action={loadBaseData} className="inline">
+            <button type="submit" className={btnClass}>
+                Load Base Data
+            </button>
+        </form>
+    );
 }
 
-export function Button({ children, className, ...rest }: ButtonProps) {
-  return (
-    <button
-      {...rest}
-      className={clsx(
-        'flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
-        className,
-      )}
-    >
-      {children}
-    </button>
-  );
+export function LoadTestDataBtn() {
+    return (
+        <form action={loadTestData} className="inline">
+            <button type="submit" className={btnClass}>
+                Load Test Data
+            </button>
+        </form>
+    );
 }
+
+
+
+

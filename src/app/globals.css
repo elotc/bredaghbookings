@@ -6,6 +6,24 @@
 }
 
 @theme inline {
+
+  --color-bredagh-maroon: #6C1C26;
+  
+  --color-bredagh-maroon-50: #f6e6e8;
+  --color-bredagh-maroon-100: #eed0d4;
+  --color-bredagh-maroon-200: #e1a7ad;
+  --color-bredagh-maroon-300: #ce757d;
+  --color-bredagh-maroon-400: #b94a54;
+  --color-bredagh-maroon-500: #6C1C26;
+  --color-bredagh-maroon-600: #5e1821;
+  --color-bredagh-maroon-700: #4d131a;
+  --color-bredagh-maroon-800: #3d0f15;
+  --color-bredagh-maroon-900: #2e0b10;
+  --color-bredagh-maroon-950: #1a0507;
+  --color-bredagh-white: #F2F2F2;
+
+  --color-bredagh-accent: #F4B942; /* A warm gold accent that pairs well with maroon */
+  
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);

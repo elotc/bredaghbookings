@@ -1,21 +1,20 @@
-import { getOrgById } from "@/data/bookings/orgDb";
+import { getOrgClubGroupingById } from "@/data/dataAccessLayer";
 import OrgForm from "@/components/admin/org/OrgForm";
-import { updateOrgAction } from "@/lib/admin/OrgActions";
 import { notFound } from "next/navigation";
+import { OrgType } from "@/data/definitions";
 
 export default async function EditOrgPage({ params }: { params: { id: string } }) {
-    const org = await getOrgById(Number(params.id));
-    if (!org) notFound();
-
-    async function action(formData: FormData) {
-        "use server";
-        await updateOrgAction(Number(params.id), formData);
-    }
+    const { id } = await params;
+    const data = await getOrgClubGroupingById(Number(id));
+    if (!data) notFound();
 
     return (
-        <main className="max-w-lg mx-auto py-8">
-            <h1 className="text-2xl font-bold mb-6">Edit Organisation</h1>
-            <OrgForm org={org} action={action} />
-        </main>
+        <OrgForm 
+            orgType={data.org.type as OrgType} 
+            org={data.org} 
+            clubId={data.club?.id} 
+            clubName={data.club?.name} 
+            groupingId={data.grouping?.id} 
+            groupingName={data.grouping?.name} />
     );
 }

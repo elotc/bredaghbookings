@@ -11,7 +11,7 @@ export function SignInButton ( props: {
 
     return(
         <button className={props.className || defClass} onClick={() => { 
-            router.push("/auth/sign-in")
+            router.push("/auth")
         }}>{props.children || "Sign In"}</button>
     );
 }

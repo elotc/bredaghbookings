@@ -1,6 +1,7 @@
 
-import { adminLinks } from "@/components/admin/adminLinks";
+import { adminLinks } from "@/components/admin/AdminLinks";
 import TableCounts from "@/components/admin/TableCounts";
+import { LoadBaseDataBtn, LoadTestDataBtn } from "@/components/general/buttons";
 
 // Dummy fetch functions for row counts (replace with real API calls)
 async function fetchCount(endpoint: string): Promise<number> {
@@ -17,6 +18,8 @@ export default function AdminPage() {
     return (
         <div>
             <h1 className="text-2xl font-bold mb-8">Administration Home Page</h1>
+            <LoadBaseDataBtn />
+            <LoadTestDataBtn />
             <TableCounts />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {adminLinks.flatMap(group =>

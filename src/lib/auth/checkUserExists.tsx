@@ -1,10 +1,10 @@
 "use server";
 
-import { checkUserExists } from "@/data/db";
+import { checkUserEmailExists } from "@/data/dataAccessLayer";
 
 export async function checkUserIsRegistered(email: string) {
     try {
-        return await checkUserExists(email);
+        return await checkUserEmailExists(email);
     } catch (error) {
         throw error;
         return false

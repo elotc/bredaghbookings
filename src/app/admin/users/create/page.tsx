@@ -1,14 +1,15 @@
 
-import CreateUserForm from "@/components/admin/user/CreateUserForm";
-import { getUserEmails } from "@/data/db";
+import UserForm from "@/components/admin/user/UserForm";
+import { getAllUserEmails } from "@/data/dataAccessLayer";
 
 
 export default async function CreateUserPage() {
-    let userEmails = await getUserEmails();
+    let userEmails = await getAllUserEmails();
     const emailList = userEmails
         .map(u => u.email)
         .filter((email): email is string => email !== null);
+    
     return (
-        <CreateUserForm emails={emailList} />
+        <UserForm emails={emailList} />
     );
 }

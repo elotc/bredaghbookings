@@ -4,7 +4,8 @@ import { db } from '@/data/dbConn';
 import Resend from "next-auth/providers/resend";
 import Google from "next-auth/providers/google";
 import { clearStaleTokens } from "@/lib/auth/clearStaleTokenServerAction";
-import { setUserActive } from "@/data/db";
+import { setUserActiveByEmail } from "@/data/dataAccessLayer";
+import { sendVerificationRequest } from "@/lib/emails/sendVerificationRequest";
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -21,29 +22,41 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         verifyRequest: "/auth/auth-success",
     },
     providers: [
-        Resend({from: "no-reply@tolemics.com"}),
+        {
+            id: "BredaghEmail",
+            name: "Email",
+            type: "email",
+            maxAge: 60 * 60 * 24, // Email link will expire in 24 hours
+            sendVerificationRequest,
+        },
+        Resend(
+            {
+                from: "Bredagh <onboarding@bredagh.tolemics.com>",
+                apiKey: process.env.RESEND_API_KEY
+            }
+        ),
         Google({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         }),
     ],
     callbacks: {
-        async jwt( {token,user} ) {
-            //console.log("jwt callback", {user, token});
-            if( user ) {
+        async jwt({ token, user }) {
+            if (user) {
+                console.log("JWT callback triggered for user:", user.email);
                 await clearStaleTokens();
-                if(user.email ) {
-                    await setUserActive(user.email);
+                if (user.email) {
+                    await setUserActiveByEmail(user.email);
                 }
                 return {
                     ...token,
-                    id: user.id, 
+                    id: user.id,
                 };
             }
             return token;
         },
-        async session({session,token}){
-            //console.log("session callback", {session, token});
+        async session({ session, token }) {
+            console.log("Session callback triggered for user:", session.user.email);
             return {
                 ...session,
                 user: {

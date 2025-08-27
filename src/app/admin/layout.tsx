@@ -1,13 +1,13 @@
 
-import { adminLinks } from "@/components/admin/adminLinks";
-import LeftNav from "@/components/general/left-nav";
+import { adminLinks } from "@/components/admin/AdminLinks";
+import SiteHomeLeftNav from "@/components/general/SiteHomeLeftNav";
 
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     
     <div className="flex min-h-screen">
-      <LeftNav links={adminLinks} />
+      <SiteHomeLeftNav links={adminLinks} />
       <main className="flex-1 bg-gray-50 p-8">{children}</main>
     </div>
   );

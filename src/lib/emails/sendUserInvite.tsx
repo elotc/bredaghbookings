@@ -1,4 +1,6 @@
-import { InviteUserEmail } from '@/components/email/invite-user';
+"use server";
+
+import { InviteUserEmail } from '@/components/email/InviteUserEmail';
 import { Resend } from 'resend';
 import { log } from '../util/logging';
 
@@ -26,8 +28,9 @@ export async function sendUserInvite(toName: string, toEmail: string, fromName: 
             react: emailContent,
         });
 
+        console.log('Email sent successfully:', data);
         if (error) {
-            log('Error sending email:', 'error', error.message);
+            throw new Error(`Error sending user invite email: ${error}`);
         }
     } catch (error) {
         const errorMessage =

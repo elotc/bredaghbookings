@@ -1,14 +1,20 @@
-import { BookingAckEmail } from '@/components/email/booking-ack-email';
+"use server";
+
+import { BookingAckEmail } from '@/components/email/BookingAckEmail';
 import { Resend } from 'resend';
 import { log } from '../util/logging';
 
-const baseUrl = process.env.BASE_URL
-    ? `http://${process.env.BASE_URL}`
-    : 'http://localhost:3000';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendBookingAck(toName: string, toEmail: string, fromName: string) {
+    const baseUrl = process.env.BASE_URL
+        ? `http://${process.env.BASE_URL}`
+        : 'http://localhost:3000';
+
+    console.log('Sending booking acknowledgment:', process.env.RESEND_API_KEY, toName, toEmail, fromName);
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    //const resend = new Resend("re_4haSKf38_LpXZADCVKapV5ZgwMJ4L1f2R");
+
     log('Sending booking acknowledgment:', 'info', toName + '|' + toEmail + '|' + fromName);
     try {
         let emailContent = BookingAckEmail({
@@ -16,6 +22,7 @@ export async function sendBookingAck(toName: string, toEmail: string, fromName: 
             relatingTo: "Bredagh Ladies Senior Football",
             bookingLink: baseUrl + "/bookings/1/view",
         });
+
         let emailSubject = 'Bredagh Booking Acknowledgement';
 
         const { data, error } = await resend.emails.send({

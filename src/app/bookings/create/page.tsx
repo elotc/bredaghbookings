@@ -1,15 +1,16 @@
-"use client";
 
-import CreateBookingRequestForm from "@/components/bookings/CreateBookingRequestForm";
+import BookingRequestForm from "@/components/bookings/BookingRequestForm";
+import { getAllOrgClubGrouping } from "@/data/dataAccessLayer";
 
-export default function CreateBookingRequestPage() {
-    // Replace this with your actual submit logic (e.g. call an API or server action)
-    const handleSubmit = async (data: any) => {
-        // Example: await createBookingRequestAction(data);
-        alert("Booking request submitted!\n" + JSON.stringify(data, null, 2));
-        // Optionally, redirect after creation
-        // router.push("/admin/booking-requests");
-    };
+export default async function CreateLocationPage() {
+    const allOrgs = await getAllOrgClubGrouping();
+    const filteredOrgs = allOrgs.filter(org => org.orgType === "Team");
 
-    return <CreateBookingRequestForm onSubmit={handleSubmit} />;
+    return (
+        <BookingRequestForm
+            allOrgs={filteredOrgs}
+
+        />
+    );
 }
+

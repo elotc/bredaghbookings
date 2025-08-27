@@ -1,8 +1,8 @@
 "use client"
 
-import { checkUserExists } from "@/data/db";
 import { checkUserIsRegistered } from "@/lib/auth/checkUserExists";
 import { handleEmailSignin } from "@/lib/auth/emailSigninServerActions";
+import Link from "next/link";
 import { useState, useTransition } from "react";
 
 export function SignInPage() {
@@ -12,7 +12,7 @@ export function SignInPage() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if( await checkUserIsRegistered(formData.email)) {
+        if (await checkUserIsRegistered(formData.email)) {
             startTransition(async () => { await handleEmailSignin(formData.email); });
         } else {
             alert("You have not been registered as a user. Please contact your company administrator.");
@@ -44,7 +44,7 @@ export function SignInPage() {
                                 />
                             </div>
                             <div className="p-4">
-                                <button 
+                                <button
                                     type="submit"
                                     className="w-full h-10 items-center shadow-lg  rounded-sm bg-blue-300 px-5 text-white hover:bg-blue-400"
                                     disabled={disableButton}
@@ -52,6 +52,17 @@ export function SignInPage() {
                                     Sign-in via Email
                                 </button>
                             </div>
+                            <Link
+                                href="/demo"
+                                className="
+                                    flex p-2 mb-2 rounded 
+                                    w-full md:w-auto md:mr-2
+                                    justify-center
+                                    bg-gray-300 text-gray-800 font-semibold
+                                    hover:bg-gray-400"
+                            >
+                                <span className="">Demo Login</span>
+                            </Link>
                         </form>
                     </div>
                 </div>

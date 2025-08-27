@@ -1,6 +1,6 @@
 "use server";
 
-import { deleteStaleTokens } from "@/data/db";
+import { deleteStaleTokens } from "@/data/dataAccessLayer";
 
 export async function clearStaleTokens() {
     try {
