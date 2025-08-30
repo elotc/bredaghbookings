@@ -15,7 +15,6 @@ export default function LocationTable({ locations, facilityCounts }:
         <thead>
           <tr>
             <StdTabTh>Name</StdTabTh> 
-            <StdTabTh>Abbreviation</StdTabTh>
             <StdTabTh>Actions</StdTabTh>
           </tr>
         </thead>
@@ -23,7 +22,6 @@ export default function LocationTable({ locations, facilityCounts }:
           {locations.map(location => (
             <tr key={location.id}>
               <StdTabTd>{location.name}</StdTabTd>
-              <StdTabTd>{location.abbrev}</StdTabTd>
               <StdTabActionTd>
                 <StdTabNavInlBtn
                   actionName="Facilities"

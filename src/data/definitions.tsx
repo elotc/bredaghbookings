@@ -99,19 +99,6 @@ export type ScheduleList = {
     name: string;
 };
 
-// export const schedule_block = pgTable("schedule_block", {
-//   id: serial("id").primaryKey(),
-//   scheduleId: integer("schedule_id")
-//     .notNull()
-//     .references(() => schedule.id, { onDelete: "cascade" }),
-//   startDate: date("start_date").notNull(),
-//   endDate: date("end_date").notNull(),
-//   startTime: time("start_time").notNull(),
-//   endTime: time("end_time").notNull(),
-//   status: scheduleBlockStatusEnum("status").notNull().default("Closed"),
-//   ...timestamps,
-// });
-
 export type ScheduleBlock = {
     id: number;
     scheduleId: number;
@@ -135,17 +122,7 @@ export type ScheduleFacilityBlock = {
     status: ScheduleBlockStatus | string;
 };
 
-export type FacilityBooking = {
-    bookingFacilityId: number;
-    bookingRequestId: number;
-    bookingRequestAbbrev: string;
-    bookingRequestDescription: string | null;
-    facilityId: number;
-    date: string;
-    startTime: string;
-    endTime: string;
-    status: SlotStatus | string;
-};
+
 
 // == SLOTS ==
 export enum SlotStatus {
@@ -173,7 +150,7 @@ export type TimeSlot = {
 
 export type Slot = {
     slotId: number;
-    status: SlotStatus;
+    status: SlotStatus | string;
     teamId: number;
     label: string;
 };
@@ -191,12 +168,23 @@ export enum RoleType {
     VIEWER = "Viewer",
 };
 
-export type User = {
+
+export type BaseUser = {
     id: string;
     name: string | null;
     email: string | null;
     status?: StdStatus | string | null;
 };
+
+export type UserRole = {
+    userId: string;
+    name: string | null;
+    email: string | null;
+    role: string;
+    orgId: number;
+    orgName: string;
+    orgType: string;
+}
 
 export type UserOrgRoleType = {
     userId: string;
@@ -252,7 +240,9 @@ export type UserOrgRole = {
     role: RoleType | string;
     orgType: OrgType | string;
     clubName: string | null;
+    clubId: number | null;
     groupingName: string | null;
+    groupingId: number | null;
     orgName: string;
     fullName: string;
 };
@@ -281,36 +271,60 @@ export enum BookingFacilityStatus {
 export type BookingRequest = {
     bookingId: number;
     teamId: number;
+    groupingId: number;
+    clubId: number;
 
     requestorId: string;
+    requestorName: string | null;
+    requestorEmail: string | null;
+
     approverId: string | null;
+    approverName: string | null;
+    approverEmail: string | null;
 
     status: BookingStatus | string;
     eventType: BookingType | string;
+    
+    description: string;
 
-    bookingAbbrev: string;
-    description: string | null;
+    requestedNumSlots: number;
 
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt: Date;
+    updatedAt: Date;
 };
 
+export type FacilityBooking = {
+    bookingFacilityId: number;
+    bookingRequestId: number;
+    bookingRequestDescription: string;
+    teamId: number;
+    facilityId: number;
+    date: string;
+    startTime: string;
+    endTime: string;
+    status: SlotStatus | string;
+};
 
 export type BookingFacility = {
     id: number;
     bookingId: number;
     facilityId: number;
+    facilityName: string;
 
     date: string;
     startTime: string;
     endTime: string;
 
-    status: BookingFacilityStatus;
+    status: BookingFacilityStatus | string;
 };
 
 export type BookingComment = {
     id: number;
     comment: string;
     userId: string;
+    userName: string | null;
     bookingId: number;
+    updatedAt: Date;
+    createdAt: Date;
 };
+

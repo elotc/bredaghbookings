@@ -24,7 +24,6 @@ export default function OrgRoleTable({ org, club, grouping, users }: { org: Org;
                     <tr>
                         <StdTabTh>User</StdTabTh>
                         <StdTabTh>Role</StdTabTh>
-                        <StdTabTh>Status</StdTabTh>
                         <StdTabTh>Actions</StdTabTh>
                     </tr>
                 </thead>
@@ -33,7 +32,6 @@ export default function OrgRoleTable({ org, club, grouping, users }: { org: Org;
                         <tr key={org.id + "|" + user.userId + "|" + user.role}>
                             <StdTabTd>{user.userName}</StdTabTd>
                             <StdTabTd>{user.role}</StdTabTd>
-                            <StdTabTd>{user.status}</StdTabTd>
                             <StdTabActionTd>
                                 <StdTabUpdInlBtn updatePageLink={`/admin/orgs/${org.id}/users/${user.userId}/edit`} />
                                 <StdTabDelInlBtn

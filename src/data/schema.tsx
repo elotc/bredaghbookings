@@ -26,19 +26,7 @@ export const orgStatusEnum = pgEnum("org_status", ["Active", "Pending", "Archive
 export const userStatusEnum = pgEnum("user_status", ["Active", "Pending", "Archived"]);
 export const orgTypeEnum = pgEnum("org_type", ["Club", "Grouping", "Team"]);
 export const userOrgRoleEnum = pgEnum("user_org_role", ["Admin", "Editor", "Viewer"]);
-export const bookingRequestStatusEnum = pgEnum("booking_request_status", [
-    "Requested",
-    "Approved",
-    "Rejected",
-    "Withdrawn",
-]);
-export const bookingEventTypeEnum = pgEnum("booking_event_type", [
-    "Training",
-    "Match",
-    "Event",
-    "Other",
-]);
-export const bookingFacilityStatusEnum = pgEnum("booking_facility_status", ["Active", "Inactive"]);
+
 export const seasonStatusEnum = pgEnum("season_status", ["Open", "Closed", "Pending"]);
 export const scheduleBlockStatusEnum = pgEnum("schedule_block_status", ["Closed", "Available"]);
 
@@ -191,7 +179,7 @@ export const user_org = pgTable(
 // == LOCATIONS / FACILITIES ==
 export const location = pgTable("location", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   abbrev: text("abbrev").notNull(),
   ...timestamps,
 });
@@ -213,9 +201,33 @@ export const facility = pgTable("facility", {
 
 
 /// == BOOKINGS ===
+
+export const bookingRequestStatusEnum = pgEnum("booking_request_status", [
+    "Requested",
+    "Approved",
+    "Rejected",
+    "Withdrawn",
+]);
+export const bookingEventTypeEnum = pgEnum("booking_event_type", [
+    "Training",
+    "Match",
+    "Event",
+    "Other",
+]);
+export const bookingFacilityStatusEnum = pgEnum("booking_facility_status", [
+  "Active", 
+  "Inactive"
+]);
+
 export const booking_request = pgTable("booking_request", {
   bookingId: serial("booking_id").primaryKey(),
   teamId: integer("team_id")
+    .notNull()
+    .references(() => org.id, { onDelete: "cascade" }),
+  groupingId: integer("grouping_id")
+    .notNull()
+    .references(() => org.id, { onDelete: "cascade" }),
+  clubId: integer("club_id")
     .notNull()
     .references(() => org.id, { onDelete: "cascade" }),
   requestorId: text("requestor_id")
@@ -225,8 +237,7 @@ export const booking_request = pgTable("booking_request", {
     .references(() => users.id, { onDelete: "set null" }),
   status: bookingRequestStatusEnum("status").notNull().default("Requested"),
   eventType: bookingEventTypeEnum("event_type").notNull().default("Training"),
-  bookingAbbrev: text("booking_abbrev").notNull(),
-  description: text("description"),
+  description: text("description").notNull(),
   ...timestamps,
 });
 
@@ -241,15 +252,15 @@ export const booking_facility = pgTable("booking_facility", {
   date: date("date").notNull(),
   startTime: time("start_time").notNull(),
   endTime: time("end_time").notNull(),
-  status: bookingFacilityStatusEnum("status").notNull().default("Active"),
-  
+  status: bookingRequestStatusEnum("status").notNull().default("Requested"),
+
   ...timestamps,
 });
 
 export const booking_comment = pgTable("booking_comment", {
   id: serial("id").primaryKey(),
   comment: text("comment").notNull(),
-  user_id: text("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   bookingId: integer("booking_id")
@@ -262,7 +273,7 @@ export const booking_comment = pgTable("booking_comment", {
 // == SCHEDULE ==
 export const schedule = pgTable("schedule", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   ...timestamps,
 });
 

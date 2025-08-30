@@ -17,6 +17,12 @@ export const BookingContext = createContext<{
     setRequestorId: (requestorId: string | null) => void;
     teamId: number;
     setTeamId: (teamId: number) => void;
+    groupingId: number;
+    setGroupingId: (groupingId: number) => void;
+    clubId: number;
+    setClubId: (clubId: number) => void;
+    fullTeamName: string;
+    setFullTeamName: (fullTeamName: string) => void;
     focusDate: Date;
     setFocusDate: (focusDate: Date) => void;
     startDate: Date;
@@ -36,6 +42,12 @@ export const BookingContext = createContext<{
     setRequestorId: () => { },
     teamId: -1,
     setTeamId: () => { },
+    groupingId: -1,
+    setGroupingId: () => { },
+    clubId: -1,
+    setClubId: () => { },
+    fullTeamName: "",
+    setFullTeamName: () => { },
     focusDate: new Date(),
     setFocusDate: () => { },
     startDate: new Date(),
@@ -53,6 +65,9 @@ export function BookingContextProvider({ children }: { children: React.ReactNode
     const [currentPage, setCurrentPage] = useState(0);
     const [requestorId, setRequestorId] = useState<string | null>(null);
     const [teamId, setTeamId] = useState<number>(-1);
+    const [groupingId, setGroupingId] = useState<number>(-1);
+    const [clubId, setClubId] = useState<number>(-1);
+    const [fullTeamName, setFullTeamName] = useState<string>("");
     const [focusDate, setFocusDate] = useState<Date>(new Date());
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
@@ -69,6 +84,12 @@ export function BookingContextProvider({ children }: { children: React.ReactNode
             setRequestorId,
             teamId,
             setTeamId,
+            groupingId,
+            setGroupingId,
+            clubId,
+            setClubId,
+            fullTeamName,
+            setFullTeamName,
             focusDate,
             setFocusDate,
             startDate,

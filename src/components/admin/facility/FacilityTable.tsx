@@ -15,10 +15,6 @@ export default function FacilityTable({ location, facilities }: { location: Loca
         <thead>
           <tr>
             <StdTabTh>Name</StdTabTh>
-            <StdTabTh>Abbrev</StdTabTh>
-            <StdTabTh>Schedule</StdTabTh>
-            <StdTabTh>Slot Duration</StdTabTh>
-            <StdTabTh>Concurrent Use</StdTabTh>
             <StdTabTh>Actions</StdTabTh>
           </tr>
         </thead>
@@ -26,10 +22,6 @@ export default function FacilityTable({ location, facilities }: { location: Loca
           {facilities.map(facility => (
             <tr key={facility.id}>
               <StdTabTd>{facility.name}</StdTabTd>
-              <StdTabTd>{facility.abbrev}</StdTabTd>
-              <StdTabTd>{facility.scheduleName}</StdTabTd>
-              <StdTabTd>{facility.slotDurationMins}</StdTabTd>
-              <StdTabTd>{facility.concurrentUseNumber}</StdTabTd>
               <StdTabActionTd>
                 <StdTabUpdInlBtn 
                   updatePageLink={`/admin/locations/${location.id}/facilities/${facility.id}/edit`} />

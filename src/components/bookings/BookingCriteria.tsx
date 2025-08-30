@@ -8,29 +8,25 @@ import { BookingContext } from "@/components/bookings/BookingContext";
 import { bookingCriteriaAction } from "@/lib/bookings/BookingRequestActions";
 import { redirect } from "next/navigation";
 import SectionHeader from "./SectionHeader";
-import { set } from "zod";
 
 
 export default function BookingCriteria({ teams, allFacilities }: { teams: ClubGroupingTeam[]; allFacilities: FacilityList[]; }) {
     const { thisUserOrg } = useContext(UserOrgContext);
     const {
-        setRequestorId, teamId, setTeamId,
+        setRequestorId, teamId, setTeamId, setFullTeamName,
+        groupingId, setGroupingId, clubId, setClubId,
         startDate, setStartDate, endDate, setEndDate,
         facilities, setFacilities
     } = useContext(BookingContext);
 
-    console.log("XXXXX Teams:", teams);
-
     useEffect(() => {
         if (!thisUserOrg) {
             console.error("No user org context found, redirecting to sign-in.");
-            redirect("/auth/sign-in");
+            redirect("/role/role-error");
         }
         setRequestorId(thisUserOrg.userId);
     }, [thisUserOrg, setRequestorId]);
 
-    const [clubId, setClubId] = useState<string | number>(-1);
-    const [groupingId, setGroupingId] = useState<string | number>(-1);
     const [facilitiesLoading, setFacilitiesLoading] = useState<boolean>(false);
 
     const [clubOptions, setClubOptions] = useState<any[]>([]);
@@ -46,21 +42,24 @@ export default function BookingCriteria({ teams, allFacilities }: { teams: ClubG
             setClubOptions([{ value: -1, label: "..." }, { value: teams[0].clubId, label: String(teams[0].clubName) }]);
             setGroupingOptions([{ value: -1, label: "..." }, { value: teams[0].groupingId, label: String(teams[0].groupingName) }]);
             setTeamOptions([{ value: -1, label: "..." }, { value: teams[0].teamId, label: String(teams[0].teamName) }]);
-            console.log("Single team selected:", teams[0]);
             setClubId(teams[0].clubId);
             setGroupingId(teams[0].groupingId);
             setTeamId(teams[0].teamId);
+            setFullTeamName(teams[0].clubName + "/" + (teams[0].groupingName + "/" + teams[0].teamName || ""));
         } else {
+            console.log("Setting club, grouping, and team options based on teams data:", teams);
             setClubOptions([
                 { value: -1, label: "Select club..." },
                 ...Array.from(
                     new Map(
                         teams
-                            .filter(team => team.clubId && team.clubName)
                             .map(team => [team.clubId, { value: String(team.clubId), label: String(team.clubName) }])
                     ).values()
                 ),
             ]);
+            if( clubOptions.length === 2 ) {
+                setClubId(clubOptions[1].value);
+            }
             setGroupingOptions([
                 { value: -1, label: "Select grouping..." },
                 ...Array.from(
@@ -71,6 +70,9 @@ export default function BookingCriteria({ teams, allFacilities }: { teams: ClubG
                     ).values()
                 ),
             ]);
+            if( groupingOptions.length === 2 ) {
+                setGroupingId(groupingOptions[1].value);
+            }
             setTeamOptions([
                 { value: -1, label: "Select team..." },
                 ...Array.from(
@@ -81,13 +83,25 @@ export default function BookingCriteria({ teams, allFacilities }: { teams: ClubG
                     ).values()
                 ),
             ]);
+            if( teamOptions.length === 2 ) {
+                setTeamId(teamOptions[1].value);
+            }
+            console.log("Club, Grouping, and Team options set:", { clubOptions, groupingOptions, teamOptions });
         }
     }, [teams, clubId, groupingId, teamId, setClubId, setGroupingId, setTeamId, setClubOptions, setGroupingOptions, setTeamOptions]);
 
-    function setClubAndReset(selectedClubId: string | number) {
+    function setClubAndReset(selectedClubId: number) {
         setClubId(selectedClubId);
         setGroupingId(-1);
         setTeamId(-1);
+    }
+
+    function setTeam(selectedTeamId: number) {
+        console.log("Setting team ID to:", selectedTeamId);
+        setTeamId(selectedTeamId);
+        const selectedTeam = teams.find(team => team.teamId === selectedTeamId);
+        setFullTeamName(selectedTeam?.clubName + "/" + (selectedTeam?.groupingName + "/" + selectedTeam?.teamName || ""));
+        console.log("Selected team:", selectedTeam, setFullTeamName);
     }
 
     useEffect(() => {
@@ -130,26 +144,26 @@ export default function BookingCriteria({ teams, allFacilities }: { teams: ClubG
                     <StdFormSelect
                         name="clubId"
                         label="Club"
-                        onChange={setClubAndReset}
+                        onChange={value => setClubAndReset(Number(value))}
                         options={clubOptions}
                         defaultValue={clubId}
-                        readOnly={clubOptions.length <= 2}
+                        readOnly={false}
                     />
                     <StdFormSelect
                         name="groupingId"
                         label="Code"
-                        onChange={setGroupingId}
+                        onChange={value => setGroupingId(Number(value))}
                         options={groupingOptions}
                         defaultValue={groupingId}
-                        readOnly={groupingOptions.length <= 2}
+                        readOnly={false}
                     />
                     <StdFormSelect
                         name="teamId"
                         label="Team"
-                        onChange={value => setTeamId(Number(value))}
+                        onChange={value => setTeam(Number(value))}
                         options={teamOptions}
                         defaultValue={teamId}
-                        readOnly={teamOptions.length <= 2}
+                        readOnly={false}
                     />
                 </div>
                 <StdFormDivider text="Select date range for your booking" />

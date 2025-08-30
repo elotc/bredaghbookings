@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { getAuthUserDetails } from '../auth/getAuthUserDetails';
 import { log } from '../util/logging';
-import { sendBookingAck } from '@/lib/emails/sendBookingAck';
+import { sendBookingAck } from '@/lib/emails/sendBookingUpdate';
 
 
 

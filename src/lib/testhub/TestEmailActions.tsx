@@ -1,5 +1,5 @@
 
-import { sendBookingAck } from "../emails/sendBookingAck";
+import { sendBookingAck } from "../emails/sendBookingUpdate";
 import { sendUserInvite } from "../emails/sendUserInvite";
 import { sendVerificationRequest } from "../emails/sendVerificationRequest";
 

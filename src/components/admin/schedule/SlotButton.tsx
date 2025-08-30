@@ -10,12 +10,12 @@ export function SlotButton({
     onSelect: (slotId: number) => void;
 }) {
     function getStatusClasses(status: SlotStatus, selected: boolean) {
-        if (selected) return "border-2 border-black"; // highlight selected
+        if (selected) return "border-1 border-black dark:border-white"; // highlight selected
         switch (status) {
             case SlotStatus.AVAILABLE:
                 return "bg-green-500 text-white border-green-600";
             case SlotStatus.CLOSED:
-                return "bg-gray-700 text-white border-gray-800";
+                return "bg-gray-400 text-white border-gray-800";
             case SlotStatus.ENQUIRE:
                 return "bg-green-200 text-gray-900 border-green-300";
             case SlotStatus.BOOKED:
@@ -35,18 +35,18 @@ export function SlotButton({
                 type="button"
                 onClick={onSelect.bind(null, slot.slotId)}
                 disabled={
-                    [SlotStatus.CLOSED, SlotStatus.BOOKED, SlotStatus.REQUESTED].includes(slot.status)
+                    [SlotStatus.CLOSED, SlotStatus.BOOKED, SlotStatus.REQUESTED].includes(slot.status as SlotStatus)
                 }
                 className={`block w-full py-1 px-3 rounded border text-sm flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap
-                    ${getStatusClasses(slot.status, selectedSlots.includes(slot.slotId))} 
-                    ${[SlotStatus.CLOSED, SlotStatus.BOOKED, SlotStatus.REQUESTED].includes(slot.status)
+                    ${getStatusClasses(slot.status as SlotStatus, selectedSlots.includes(slot.slotId))} 
+                    ${[SlotStatus.CLOSED, SlotStatus.BOOKED, SlotStatus.REQUESTED].includes(slot.status as SlotStatus)
                         ? "opacity-60 cursor-not-allowed"
                         : ""
                     }`}
                 title={slot.status}
             >
                 {selectedSlots.includes(slot.slotId) ? (
-                    <span className="ml-2 text-sm text-center" aria-label="selected">✔️</span>
+                    <span className="ml-2 text-sm text-center" aria-label="selected">selected</span>
                 ) : (
                     <span
                         className="mx-auto overflow-hidden text-ellipsis whitespace-nowrap block w-full text-center"

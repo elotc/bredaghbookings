@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { User, UserOrgRole } from "@/data/definitions";
+import { BaseUser, UserOrgRole } from "@/data/definitions";
 import { useState, useContext } from "react";
 import { UserContext } from "./UserOrgContext";
 
@@ -9,7 +9,7 @@ import { UserContext } from "./UserOrgContext";
 const RoleSelector = dynamic(() => import("@/components/role/RoleSelector"), { ssr: false });
 const DemoUserSelector = dynamic(() => import("@/components/auth/DemoUserSelector"), { ssr: false });
 
-export default function EntryPoint({users, userOrgs}: { users: User[], userOrgs: UserOrgRole[] }) {
+export default function EntryPoint({users, userOrgs}: { users: BaseUser[], userOrgs: UserOrgRole[] }) {
     if (users.length === 0) {
         return <div>No demo users available.</div>;
     }

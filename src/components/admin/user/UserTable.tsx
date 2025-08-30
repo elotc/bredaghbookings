@@ -2,10 +2,10 @@
 
 import { StdTabTd, StdTabTh, StdTabUpdInlBtn, StdTabDelInlBtn, StdTabClass, StdTabTitle, StdTabNavInlBtn, StdTabActionTd } from "@/components/general/StdTable";
 import { deleteUserAction } from "@/lib/admin/UserActions";
-import { User, CountsType } from "@/data/definitions";
+import { BaseUser, CountsType } from "@/data/definitions";
 import { useState } from "react";
 
-export default function UserTable({ users, userOrgCounts }: { users: User[], userOrgCounts: CountsType[] }) {
+export default function UserTable({ users, userOrgCounts }: { users: BaseUser[], userOrgCounts: CountsType[] }) {
     const [error, setError] = useState<string | null>(null);
     return (
         <main className="max-w-4xl mx-auto py-8">
@@ -13,18 +13,14 @@ export default function UserTable({ users, userOrgCounts }: { users: User[], use
             <table className={StdTabClass}>
                 <thead>
                     <tr>
-                        <StdTabTh>Name</StdTabTh>
                         <StdTabTh>Email</StdTabTh>
-                        <StdTabTh>Status</StdTabTh>
                         <StdTabTh>Actions</StdTabTh>
                     </tr>
                 </thead>
                 <tbody>
                     {users.map(user => (
                         <tr key={user.id}>
-                            <StdTabTd>{user.name}</StdTabTd>
                             <StdTabTd>{user.email}</StdTabTd>
-                            <StdTabTd>{user.status}</StdTabTd>
                             <StdTabActionTd>
                                 <StdTabNavInlBtn 
                                     actionName="Roles" 

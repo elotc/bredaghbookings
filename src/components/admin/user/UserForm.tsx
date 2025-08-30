@@ -3,9 +3,9 @@
 import { useActionState, useState } from "react";
 import { userAction } from "@/lib/admin/UserActions";
 import { StdFormCancelBtn, StdForm, StdFormInput, StdFormMetaText, StdFormReadOnly, StdFormSelect, StdFormSubmitBtn, StdFormError, StdFormHidden, StdFormButtonBar } from "@/components/general/StdForm";
-import { StdStatus, User } from "@/data/definitions";
+import { StdStatus, BaseUser } from "@/data/definitions";
 
-export default function UserForm({ user, emails = [] }: { user?: User, emails?: string[] }) {
+export default function UserForm({ user, emails = [] }: { user?: BaseUser, emails?: string[] }) {
     const [name, setName] = useState(user?.name || "");
     const [email, setEmail] = useState(user?.email || "");
     const [status, setStatus] = useState<string | number>(user?.status || "pending");

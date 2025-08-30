@@ -3,7 +3,7 @@ import { ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/2
 import Link from "next/link";
 import React from "react";
 
-export const StdTabClass = "min-w-full bg-white rounded shadow";
+export const StdTabClass = "min-w-full rounded shadow";
 
 const thClass = "py-2 px-2 border-b text-left";
 const tdClass = "py-1 px-1 border-b";
@@ -12,7 +12,7 @@ const tableButtonClass = "inline-flex justify-between items-center mb-1 mx-1 px-
 const tableActionButtonClass = "inline-flex justify-between items-center mb-1 mx-1 px-2 py-2 rounded bg-gray-500 text-white font-semibold hover:bg-black hover:text-yellow-300 transition-colors";
 const createButtonClass = "flex justify-between items-center mb-1 px-2 py-1 rounded bg-[#003366] text-[#FFD700] font-semibold hover:bg-[#002244] hover:text-yellow-300 transition-colors"
 
-export function StdTabTitle({ title, createPageLink, error }: { title: string, createPageLink?: string, error: string | null }) {
+export function StdTabTitle({ title, createPageLink, error }: { title: string, createPageLink?: string, error?: string | null }) {
     return (
         <div>
             {error && <StdTabError error={error} />}
@@ -36,8 +36,12 @@ export function StdTabAddBtn({ createPageLink }: { createPageLink: string }) {
 
 export function StdTabNavBtn({ ref, label = "Back" }: { ref: string, label?: string }) {
     return (
-        <Link href={ref} className="px-4 py-2 rounded bg-gray-300 text-gray-800 hover:bg-gray-400">
-            <span className="hidden md:block">{label}</span>
+        <Link 
+            href={ref} 
+            className="p-2 m-2 rounded 
+            bg-gray-300 text-gray-800 hover:bg-gray-400"
+        >
+            <span className="">{label}</span>
         </Link>
     );
 }

@@ -31,13 +31,7 @@ export default function RoleSelector() {
     };
 
     return (
-        <div>
-            {thisUserOrg && (
-                <div className="text-xs">
-                    <span className="text-bold">{thisUserOrg.userEmail || "Unknown"}</span>
-                    <SignOutButton />
-                </div>
-            )}
+        <div className="flex justify-center text-lg items-center gap-4 px-2 py-2 sm:gap-8 sm:px-2">
             {(userOrgs && thisUserOrg) && userOrgs.length > 0 && (
                 <div>
                     <select
@@ -46,7 +40,7 @@ export default function RoleSelector() {
                         value={thisUserOrg.userId + "|" + thisUserOrg.orgId}
                         onChange={e => setSelUserOrg?.(e.target.value)}
                         disabled={userOrgs.length <= 1}
-                        className="w-full border rounded text-xs bg-white text-bredagh-maroon"
+                        className="w-full border rounded"
                     >
                         {[
                             { value: "", label: "Select a role" },

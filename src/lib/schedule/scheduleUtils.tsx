@@ -1,5 +1,5 @@
 
-import { DailySlots, ScheduleBlockStatus, Slot, SlotStatus, ScheduleBlock, Schedule, ScheduleFacilityBlock, FacilityBooking } from "@/data/definitions";
+import { DailySlots, ScheduleBlockStatus, Slot, SlotStatus, ScheduleBlock, Schedule, ScheduleFacilityBlock, FacilityBooking, BookingStatus } from "@/data/definitions";
 import { getNumDays, getNumSlots, getTotalMinutesFromDate, getTotalMinutesFromTimeString, } from "@/lib/schedule/dateTimeUtils"
 
 
@@ -16,9 +16,6 @@ export function buildTimeslots(
   if (startDate >= endDate) {
     throw new Error("Start date must be before end date");
   }
-  // console.log("Building timeslots from", startDate, "to", endDate, "with hours", startHour, "to", endHour, "and slot duration", slotDurationMins, "mins");
-  // console.log("Blocks:", blocks);
-  // console.log("Bookings:", bookings);
   const timeSlots: DailySlots[] = [];
   const numDays = getNumDays(startDate, endDate);
   for (let i = 0; i < numDays; i++) {
@@ -46,6 +43,7 @@ export function buildDailySlots(
     slotStart.setHours(startHour, 0, 0, 0);
     slotStart.setMinutes(slotStart.getMinutes() + slotDurationMins * i);
 
+    // Check if this slot overlaps with any schedule blocks - CLOSED, AVAILABLE, ENQUIRE
     const matchingBlock = blocks.find(block => {
       const blockDayStart = new Date(block.startDate);
       const blockDayEnd = new Date(block.endDate);
@@ -63,13 +61,37 @@ export function buildDailySlots(
 
     const slot: Slot = {
       slotId: slotStart.getTime(),
-      status: blockStatus === ScheduleBlockStatus.CLOSED ?
-        SlotStatus.CLOSED : blockStatus === ScheduleBlockStatus.AVAILABLE ?
-          SlotStatus.AVAILABLE : SlotStatus.ENQUIRE,
+      status: blockStatus === ScheduleBlockStatus.CLOSED 
+        ? SlotStatus.CLOSED 
+        : blockStatus === ScheduleBlockStatus.AVAILABLE 
+          ? SlotStatus.AVAILABLE 
+          : SlotStatus.ENQUIRE,
       teamId: -1,
       label: "",
     };
     slot.label = slot.status;
+
+    // Check if this slot overlaps with any bookings
+    const matchingBooking = bookings.find(booking => {
+      const bookingDate = new Date(booking.date);
+      const bookingStartTime = new Date(booking.date + " " + booking.startTime);
+      const bookingEndTime = new Date(booking.date + " " + booking.endTime);
+      return (
+        slotStart.toDateString() === bookingDate.toDateString() &&
+        slotStart >= bookingStartTime &&
+        slotStart < bookingEndTime
+      );
+    });
+    if (matchingBooking) {
+      slot.status = matchingBooking.status === BookingStatus.REQUESTED 
+        ? SlotStatus.REQUESTED 
+        : matchingBooking.status === BookingStatus.APPROVED 
+          ? SlotStatus.BOOKED 
+          : SlotStatus.AVAILABLE;
+      slot.teamId = matchingBooking.teamId;
+      slot.label = matchingBooking.bookingRequestDescription || "Booked";
+    }
+
     dailySlots.push(slot);
   }
   return dailySlots;

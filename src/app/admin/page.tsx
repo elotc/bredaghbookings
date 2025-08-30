@@ -26,13 +26,13 @@ export default function AdminPage() {
                     group.links.map(link => (
                         <div
                             key={link.key}
-                            className="bg-white rounded-lg shadow p-6 flex flex-col justify-between hover:shadow-lg transition cursor-pointer border border-gray-200"
+                            className="rounded-lg shadow p-6 flex flex-col justify-between hover:shadow-lg transition cursor-pointer border border-gray-200"
                         >
                             <div>
                                 <div className="text-lg font-semibold mb-2">{link.title}</div>
-                                <div className="text-gray-500 text-sm">{group.group}</div>
+                                <div className="text-sm">{group.group}</div>
                             </div>
-                            <div className="mt-4 text-3xl font-bold text-[#003366]">
+                            <div className="mt-4 text-3xl font-bold">
                                 0
                             </div>
                         </div>

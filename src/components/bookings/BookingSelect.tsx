@@ -5,25 +5,30 @@ import DailySlotsView from "@/components/admin/schedule/DailySlotsView";
 import { ControlPanel } from "@/components/bookings/ControlPanel";
 import { buildTimeslots } from "@/lib/schedule/scheduleUtils";
 import { BookingContext } from "@/components/bookings/BookingContext";
-import SectionHeader from "./SectionHeader";
+import SectionHeader from "@/components/bookings/SectionHeader";
 import { FacilityBooking, FacilityList, ScheduleFacilityBlock } from "@/data/definitions";
-import { SelectFacility } from "./SelectFacility";
-import { StdFormButtonBar, StdFormCancelBtn, StdFormClickBtn, StdFormSubmitBtn } from "../general/StdForm";
+import { SelectFacility } from "@/components/bookings/SelectFacility";
+import { StdFormButtonBar, StdFormCancelBtn, StdFormClickBtn } from "../general/StdForm";
 import { UserOrgContext } from "../auth/UserOrgContext";
 import { redirect } from "next/navigation";
 
-export default function BookingSelect({ blocks, bookings, facilities }:
-    { 
-        blocks: ScheduleFacilityBlock[]; 
-        bookings: FacilityBooking[]; 
-        facilities: FacilityList[]; 
+export default function BookingSelectSection({ blocks, bookings, facilities, hideSelectPage, togglePages }:
+    {
+        blocks: ScheduleFacilityBlock[];
+        bookings: FacilityBooking[];
+        facilities: FacilityList[];
+        hideSelectPage: boolean;
+        togglePages: () => void;
     }) {
 
-    console.log("BookingSelect component initialized with blocks:", blocks, "and bookings:", bookings);
-    const { startDate, endDate, focusDate, setFocusDate, slots, setSlots } = useContext(BookingContext);
+    const { startDate, endDate, focusDate, setFocusDate, slots, setSlots, teamId, requestorId, fullTeamName } = useContext(BookingContext);
     const { thisUserOrg } = useContext(UserOrgContext);
 
     if (!thisUserOrg) { redirect("/auth/sign-in"); }
+    if (!teamId || !requestorId) {
+        console.error("No teamId or requestorId in BookingSelect, redirecting to criteria.");
+        redirect("/bookings/" + thisUserOrg?.userId);
+    }
 
     const [startHour, setStartHour] = useState<number>(18);
     const [endHour, setEndHour] = useState<number>(startHour + 5);
@@ -50,14 +55,6 @@ export default function BookingSelect({ blocks, bookings, facilities }:
         bookings.filter(booking => booking.facilityId === selectedFacilityId)
     );
 
-    const [ hideSelectPage, setHideSelectPage ] = useState<boolean>(false);
-    const [ hideConfirmPage, setHideConfirmPage ] = useState<boolean>(true);
-
-    function togglePages() {
-        setHideSelectPage(!hideSelectPage);
-        setHideConfirmPage(!hideConfirmPage);
-    }
-
     return (
         <div>
             <div className={`${hideSelectPage ? "hidden" : ""}`}>
@@ -75,34 +72,15 @@ export default function BookingSelect({ blocks, bookings, facilities }:
                         setSelectedFacility={setSelectedFacilityId}
                     />
                 </div>
-                <DailySlotsView 
-                    dailySlots={timeslots} 
-                    slots={slots} 
+                <DailySlotsView
+                    dailySlots={timeslots}
+                    slots={slots}
                     setSlots={setSlots}
                     facilityId={selectedFacilityId}
                 />
                 <StdFormButtonBar>
                     <StdFormCancelBtn backRef={`/bookings/${thisUserOrg.userId}`} />
                     <StdFormClickBtn onClick={togglePages} disabled={slots.length === 0} label={"Next"} />
-                </StdFormButtonBar>
-            </div>
-            <div className={`${hideConfirmPage ? "hidden" : ""}`}>
-                <SectionHeader thisPageNumber={3} />
-                <div>
-                    <h3>Selected Slots</h3>
-                    <ul>
-                        {slots.map((slot, idx) => (
-                            <li key={idx}>
-                                {facilities.find(facility => facility.id === slot.facilityId)?.name}: 
-                                {new Date(slot.slotId).toLocaleDateString([], { month: 'short', day: '2-digit', year: 'numeric' })}{" "}
-                                {new Date(slot.slotId).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <StdFormButtonBar>
-                    <StdFormClickBtn onClick={togglePages} label={"Back"} />
-                    <StdFormSubmitBtn disabled={slots.length === 0} > {"Next"} </StdFormSubmitBtn>
                 </StdFormButtonBar>
             </div>
         </div>

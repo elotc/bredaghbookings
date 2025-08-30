@@ -1,13 +1,13 @@
 "use client";
 
-import { User } from "@/data/definitions";
+import { BaseUser } from "@/data/definitions";
 import { StdForm, StdFormButtonBar, StdFormSelect, StdFormSubmitBtn } from "@/components/general/StdForm";
 import { useContext, useEffect } from "react";
 import { userSelectorAction } from "@/lib/auth/UserSelectorActions";
 import { UserOrgContext } from "@/components/auth/UserOrgContext";
 
 
-export default function DemoUserSelector({ users }: { users: User[]; }) {
+export default function DemoUserSelector({ users }: { users: BaseUser[]; }) {
 
     let { userId, setUserId } = useContext(UserContext);
 

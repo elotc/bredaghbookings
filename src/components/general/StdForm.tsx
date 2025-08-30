@@ -3,9 +3,9 @@ import Link from "next/link";
 
 export function StdForm({ title, children, action }: { title: string, children: React.ReactNode, action: (formData: FormData, id?: number) => void }) {
   return (
-    <main className="space-y-4 bg-gray-100 p-2 m-2 rounded shadow">
+    <main className="space-y-4 p-2 m-2 rounded shadow">
       <h1 className="text-2xl font-bold mb-6">{title}</h1>
-      <form action={action} className="space-y-4 bg-white p-6 rounded shadow">
+      <form action={action} className="space-y-4 p-6 rounded shadow">
         {children}
       </form>
     </main>
@@ -141,7 +141,7 @@ export function StdFormNavBtn({ ref, label = "Go" }: { ref: string, label?: stri
     <Link
       href={ref}
       className="
-        flex p-2 mb-2 rounded 
+        flex p-2 m-2 rounded 
         w-full md:w-auto md:mr-2
         justify-center
         bg-gray-300 text-gray-800 font-semibold
@@ -156,10 +156,11 @@ export function StdFormNavBtn({ ref, label = "Go" }: { ref: string, label?: stri
 export function StdFormClickBtn({ onClick, label, disabled = false }: { onClick: () => void, label: string, disabled?: boolean }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={disabled}
       className={`
-      flex p-2 mb-2 rounded 
+      flex p-2 m-2 rounded 
       w-full md:w-auto md:mr-2
       justify-center
       bg-gray-300 text-gray-800 font-semibold
@@ -185,7 +186,7 @@ export function StdFormSubmitBtn({ disabled, children = "Submit" }: {
       type="submit"
       disabled={disabled}
       className="
-        p-2 mb-2 rounded
+        p-2 m-2 rounded
         w-full md:w-auto md:mr-2
         bg-[#003366] text-[#FFD700] font-semibold 
         transition-colors 
@@ -218,7 +219,7 @@ export function StdFormFieldError({ error }: { error: string }) {
 
 export function StdFormDivider({ text }: { text: string }) {
   return (
-    <div className="relative flex pt-5 pb-2 items-center">
+    <div className="relative flex items-center mt-2 mb-1">
       <div className="flex-grow border-t border-gray-400"></div>
       <span className="flex-shrink mx-4 text-gray-400">{text}</span>
       <div className="flex-grow border-t border-gray-400"></div>

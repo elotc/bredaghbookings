@@ -1,5 +1,5 @@
 import { db } from '@/data/dbConn';
-import { eq, gt, lt, sql, and, inArray, lte, gte } from 'drizzle-orm';
+import { eq, gt, lt, sql, and, inArray, lte, gte, or } from 'drizzle-orm';
 import {
   users as usersTable,
   accounts as accountsTable,
@@ -17,9 +17,7 @@ import {
   booking_comment
 } from '@/data/schema';
 import { alias } from 'drizzle-orm/pg-core';
-import { use } from 'react';
-import { OrgUsersType, RoleType, StdStatus, UserOrgRole, User, ClubGroupingTeam, ScheduleFacilityBlock, FacilityBooking, ScheduleBlock } from './definitions';
-import { start } from 'repl';
+import { OrgUsersType, RoleType, UserOrgRole, BaseUser, ClubGroupingTeam, ScheduleFacilityBlock, FacilityBooking, ScheduleBlock, BookingComment, BookingRequest, BookingStatus, Org } from './definitions';
 
 // Authentication
 
@@ -70,8 +68,8 @@ export async function getTableRowCounts() {
 
 // User
 
-export async function getAllUsers(): Promise<User[]> {
-  const users: User[] = await db.select({
+export async function getAllUsers(): Promise<BaseUser[]> {
+  const users: BaseUser[] = await db.select({
     id: usersTable.id,
     name: usersTable.name,
     email: usersTable.email,
@@ -86,7 +84,7 @@ export async function getAllUserEmails() {
   return emails;
 }
 
-export async function getUserById(id: string): Promise<User> {
+export async function getUserById(id: string): Promise<BaseUser> {
   const users = await db.select({
     id: usersTable.id,
     name: usersTable.name,
@@ -96,7 +94,7 @@ export async function getUserById(id: string): Promise<User> {
   return users[0];
 }
 
-export async function getUserByEmail(email: string): Promise<User> {
+export async function getUserByEmail(email: string): Promise<BaseUser> {
   const users = await db.select({
     id: usersTable.id,
     name: usersTable.name,
@@ -156,6 +154,10 @@ export async function deleteUser(id: string) {
 }
 
 // User Org Roles
+
+export async function getOrgsByName(name: string) {
+  return await db.select().from(org).where(eq(org.name, name));
+}
 
 export async function getOrgRoleByUserIdOrgId(userId: string, orgId: number) {
   const role = await db.select().from(user_org)
@@ -235,7 +237,9 @@ export async function getOrgRolesByUserId(userId: string): Promise<UserOrgRole[]
     role: user_org.role,
     orgType: org.type,
     clubName: club.name,
+    clubId: club.id,
     groupingName: grouping.name,
+    groupingId: grouping.id,
     orgName: org.name,
   })
     .from(user_org)
@@ -245,7 +249,7 @@ export async function getOrgRolesByUserId(userId: string): Promise<UserOrgRole[]
     .leftJoin(grouping, eq(org.groupingId, grouping.id))
     .where(eq(user_org.userId, userId));
 
-  
+
   if (rows.length === 0) {
     console.log("No roles found for userId", userId);
   }
@@ -279,7 +283,9 @@ export async function getAllOrgRoles(): Promise<UserOrgRole[]> {
     role: user_org.role,
     orgType: org.type,
     clubName: club.name,
+    clubId: club.id,
     groupingName: grouping.name,
+    groupingId: grouping.id,
     orgName: org.name,
   })
     .from(user_org)
@@ -323,6 +329,44 @@ export async function getOrgCountsPerUser() {
     .groupBy(user_org.userId);
   return result;
 }
+// get the userIds of the Admin and Editors allocated to the Grouping and Club orgs for the org referenced by the teamId passed in
+
+export async function getTeamAuthorisers(teamId: number) {
+  // Get the team org
+  const teamOrg = await db.select({
+    clubId: org.clubId,
+    groupingId: org.groupingId
+  }).from(org).where(eq(org.id, teamId));
+  if (!teamOrg[0]) return [];
+
+  const { clubId, groupingId } = teamOrg[0];
+
+  // Get Admins and Editors for Club and Grouping orgs
+  const result = await db
+    .select({
+      userId: user_org.userId,
+      name: usersTable.name,
+      email: usersTable.email,
+      role: user_org.role,
+      orgId: user_org.orgId,
+      orgName: org.name,
+      orgType: org.type
+    })
+    .from(user_org)
+    .innerJoin(usersTable, eq(user_org.userId, usersTable.id))
+    .innerJoin(org, eq(user_org.orgId, org.id))
+    .where(
+      and(
+        inArray(user_org.orgId, [clubId, groupingId].filter((id): id is number => typeof id === 'number')),
+        or(
+          eq(user_org.role, "Admin"),
+          eq(user_org.role, "Editor")
+        )
+      )
+    );
+  return result;
+}
+
 
 export async function createUserOrgRole(data: typeof user_org.$inferInsert) {
   return await db.insert(user_org).values(data).returning();
@@ -369,6 +413,11 @@ export async function getLocations() {
 
 export async function getLocationById(id: number) {
   const locations = await db.select().from(location).where(eq(location.id, id));
+  return locations[0];
+}
+
+export async function getLocationByName(name: string) {
+  const locations = await db.select().from(location).where(eq(location.name, name));
   return locations[0];
 }
 
@@ -595,11 +644,21 @@ export async function deleteOrg(id: number) {
 // Schedules
 
 export async function getSchedules() {
-  return await db.select().from(schedule);
+  return await db.select(
+    {
+      id: schedule.id,
+      name: schedule.name,
+    }
+  ).from(schedule);
 }
 
 export async function getScheduleById(id: number) {
   const schedules = await db.select().from(schedule).where(eq(schedule.id, id));
+  return schedules[0];
+}
+
+export async function getScheduleByName(name: string) {
+  const schedules = await db.select().from(schedule).where(eq(schedule.name, name));
   return schedules[0];
 }
 
@@ -628,14 +687,14 @@ export async function getScheduleBlocksByFacilityList(facilityIds: number[], sta
     endTime: schedule_block.endTime,
     status: schedule_block.status
   }).from(facility)
-  .innerJoin(schedule_block, eq(facility.scheduleId, schedule_block.scheduleId))
-  .where(
-    and(
-      inArray(facility.id, facilityIds),
-      lte(schedule_block.startDate, startDate.toISOString()),
-      gte(schedule_block.endDate, endDate.toISOString())
-    )
-  );
+    .innerJoin(schedule_block, eq(facility.scheduleId, schedule_block.scheduleId))
+    .where(
+      and(
+        inArray(facility.id, facilityIds),
+        lte(schedule_block.startDate, startDate.toISOString()),
+        gte(schedule_block.endDate, endDate.toISOString())
+      )
+    );
 }
 
 export async function getScheduleBlocksByScheduleId(scheduleId: number) {
@@ -665,9 +724,82 @@ export async function getBookingRequests() {
   return await db.select().from(booking_request);
 }
 
-export async function getBookingRequestById(bookingId: number) {
-  const bookings = await db.select().from(booking_request).where(eq(booking_request.bookingId, bookingId));
+export async function getBookingRequestById(bookingId: number): Promise<BookingRequest | null> {
+  const requestors = alias(usersTable, "requestors");
+  const approvers = alias(usersTable, "approvers");
+
+  const bookings = await db.select(
+    {
+      bookingId: booking_request.bookingId,
+      description: booking_request.description,
+
+      eventType: booking_request.eventType,
+      teamId: booking_request.teamId,
+      groupingId: booking_request.groupingId,
+      clubId: booking_request.clubId,
+      
+      status: booking_request.status,
+      createdAt: booking_request.createdAt,
+      updatedAt: booking_request.updatedAt,
+
+      requestorId: booking_request.requestorId,
+      requestorName: requestors.name,
+      requestorEmail: requestors.email,
+
+      approverId: booking_request.approverId,
+      approverEmail: approvers.email,
+      approverName: approvers.name,
+
+      requestedNumSlots: sql<number>`
+        (SELECT COUNT(*) FROM ${booking_facility} WHERE ${booking_facility.bookingId} = ${booking_request.bookingId})
+      `
+    }
+  )
+    .from(booking_request)
+    .leftJoin(requestors, eq(booking_request.requestorId, requestors.id))
+    .leftJoin(approvers, eq(booking_request.approverId, approvers.id))
+    .where(eq(booking_request.bookingId, bookingId));
+
   return bookings[0];
+}
+
+export async function getBookingRequestsByTeamIds(teamIds: number[]) {
+  const requestors = alias(usersTable, "requestors");
+  const approvers = alias(usersTable, "approvers");
+
+  const bookings = await db.select(
+    {
+      bookingId: booking_request.bookingId,
+      description: booking_request.description,
+
+      eventType: booking_request.eventType,
+      teamId: booking_request.teamId,
+      groupingId: booking_request.groupingId,
+      clubId: booking_request.clubId,
+      status: booking_request.status,
+      createdAt: booking_request.createdAt,
+      updatedAt: booking_request.updatedAt,
+
+      requestorId: booking_request.requestorId,
+      requestorName: requestors.name,
+      requestorEmail: requestors.email,
+
+      approverId: booking_request.approverId,
+      approverEmail: approvers.email,
+      approverName: approvers.name,
+
+      requestedNumSlots: sql<number>`
+        (SELECT COUNT(*) FROM ${booking_facility} WHERE ${booking_facility.bookingId} = ${booking_request.bookingId})
+      `
+    }
+  )
+    .from(booking_request)
+    .leftJoin(requestors, eq(booking_request.requestorId, requestors.id))
+    .leftJoin(approvers, eq(booking_request.approverId, approvers.id))
+    .where(
+      inArray(booking_request.teamId, teamIds)
+    );
+  return bookings;
 }
 
 export async function getBookingsByFacilityList(facilityIds: number[], startDate: Date, endDate: Date): Promise<FacilityBooking[]> {
@@ -675,26 +807,27 @@ export async function getBookingsByFacilityList(facilityIds: number[], startDate
   return await db.select({
     bookingFacilityId: booking_facility.id,
     bookingRequestId: booking_facility.bookingId,
-    bookingRequestAbbrev: booking_request.bookingAbbrev,
     bookingRequestDescription: booking_request.description,
+    teamId: booking_request.teamId,
     facilityId: booking_facility.facilityId,
     date: booking_facility.date,
     startTime: booking_facility.startTime,
     endTime: booking_facility.endTime,
-    status: booking_facility.status
+    status: booking_request.status
   }).from(booking_facility)
-  .innerJoin(booking_request, eq(booking_facility.bookingId, booking_request.bookingId))
-  .where(
-    and(
-      inArray(booking_facility.facilityId, facilityIds),
-      gte(booking_facility.date, startDate.toISOString()),
-      lte(booking_facility.date, endDate.toISOString())
-    )
-  );
+    .innerJoin(booking_request, eq(booking_facility.bookingId, booking_request.bookingId))
+    .where(
+      and(
+        inArray(booking_facility.facilityId, facilityIds),
+        gte(booking_facility.date, startDate.toISOString()),
+        lte(booking_facility.date, endDate.toISOString())
+      )
+    );
 }
 
 
 export async function createBookingRequest(data: typeof booking_request.$inferInsert) {
+  console.log("Creating booking request with data:", data);
   return await db.insert(booking_request).values(data).returning({ bookingId: booking_request.bookingId });
 }
 
@@ -718,16 +851,37 @@ export async function getBookingFacilityCountsPerBookingRequest() {
   return result;
 }
 
-export async function getBookingFacilities(bookingId: number) {
-  return await db.select().from(booking_facility).where(eq(booking_facility.bookingId, bookingId));
+export async function getBookingFacilitiesByBookingId(bookingId: number) {
+  return await db.select(
+    {
+      id: booking_facility.id,
+      bookingId: booking_facility.bookingId,
+      facilityId: booking_facility.facilityId,
+      date: booking_facility.date,
+      startTime: booking_facility.startTime,
+      endTime: booking_facility.endTime,
+      status: booking_facility.status,
+      facilityName: facility.name
+    }
+  )
+    .from(booking_facility)
+    .innerJoin(facility, eq(booking_facility.facilityId, facility.id))
+    .where(
+      eq(booking_facility.bookingId, bookingId)
+    );
 }
 
 export async function createBookingFacility(data: typeof booking_facility.$inferInsert) {
+  console.log("Creating booking facility with data:", data);
   return await db.insert(booking_facility).values(data).returning({ id: booking_facility.id });
 }
 
 export async function updateBookingFacility(id: number, updates: Partial<typeof booking_facility.$inferInsert>) {
   await db.update(booking_facility).set(updates).where(eq(booking_facility.id, id));
+}
+
+export async function updateBookingFacilityStatusByBookingId(bookingId: number, status: BookingStatus) {
+  await db.update(booking_facility).set({ status }).where(eq(booking_facility.bookingId, bookingId));
 }
 
 export async function deleteBookingFacility(id: number) {
@@ -746,11 +900,26 @@ export async function getBookingCommentCountsPerBookingRequest() {
   return result;
 }
 
-export async function getBookingComments(bookingId: number) {
-  return await db.select().from(booking_comment).where(eq(booking_comment.bookingId, bookingId));
+export async function getBookingCommentsByBookingId(bookingId: number): Promise<BookingComment[]> {
+  return await db
+    .select({
+      id: booking_comment.id,
+      bookingId: booking_comment.bookingId,
+      comment: booking_comment.comment,
+      userId: booking_comment.userId,
+      userName: usersTable.name,
+      updatedAt: booking_comment.updatedAt,
+      createdAt: booking_comment.createdAt,
+    })
+    .from(booking_comment)
+    .innerJoin(usersTable, eq(booking_comment.userId, usersTable.id))
+    .where(
+      eq(booking_comment.bookingId, bookingId)
+    );
 }
 
 export async function createBookingComment(data: typeof booking_comment.$inferInsert) {
+  console.log("Creating booking comment with data:", data);
   return await db.insert(booking_comment).values(data).returning({ id: booking_comment.id });
 }
 

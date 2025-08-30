@@ -1,12 +1,12 @@
 "use client";
 import { StdFormCancelBtn, StdForm, StdFormHidden, StdFormInput, StdFormMetaText, StdFormNavBtn, StdFormReadOnly, StdFormSelect, StdFormSubmitBtn, StdFormButtonBar, StdFormError, StdFormFieldError } from "@/components/general/StdForm";
-import { Org, RoleType, User } from "@/data/definitions";
+import { Org, RoleType, BaseUser } from "@/data/definitions";
 import { useActionState } from "react";
 import { orgRoleAction } from "@/lib/admin/OrgRoleActions";
 import { useState } from "react";
 
 export default function OrgUserForm({ org, user, userRole }:
-    { org: Org, user?: User, userRole?: string}) {
+    { org: Org, user?: BaseUser, userRole?: string}) {
         
     const [name, setName] = useState(user?.name || "");
     const [email, setEmail] = useState(user?.email || "");

@@ -8,7 +8,7 @@ export default async function TableCounts() {
         <div>
             <div className="mb-8">
                 <h2 className="text-lg font-semibold mb-2">Database Table Row Counts</h2>
-                <table className=" bg-white rounded shadow">
+                <table className="rounded shadow">
                     <thead>
                         <tr>
                             <th className="py-1 px-4 border-b text-left">Table Name</th>
