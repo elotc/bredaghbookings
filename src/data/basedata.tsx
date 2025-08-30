@@ -7,7 +7,7 @@ export async function loadBaseData() {
     let retMsg = "Loading base data... ";
     let orgId = -1;
     await getOrgsByName("Global").then(async (res) => {
-        if (!res) {
+        if (!res || res.length === 0) {
             const org = await createOrg({ name: "Global", abbrev: "ALL", type: "Club", status: "Active", clubId: null, groupingId: null });
             orgId = org[0].id;
             retMsg += "createOrg:Global,";
@@ -18,7 +18,7 @@ export async function loadBaseData() {
     });
     let userId = "";
     await getUserByEmail("bren.duffy@gmail.com").then(async (res) => {
-        if (!res) {
+        if (!res ) {
             const user = await createUser("Brendan Duffy", "bren.duffy@gmail.com");
             userId = user[0].id;
             retMsg += "createUser:bren.duffy@gmail.com,";
@@ -28,7 +28,7 @@ export async function loadBaseData() {
         }
     });
     await getOrgRoleByUserIdOrgId(userId, orgId).then(async (res) => {
-        if (!res) {
+        if (!res ) {
             await createUserOrgRole({ userId: userId, orgId: orgId, role: "Admin" });
             retMsg += "createUserOrgRole:Admin,";
         } else {
