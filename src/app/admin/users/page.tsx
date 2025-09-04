@@ -1,7 +1,7 @@
 "use server";
 
 import UserTable from "@/components/admin/user/UserTable";
-import { getAllOrgClubGrouping, getAllUsers, getOrgCountsPerUser } from "@/data/dataAccessLayer";
+import { getAllUsers, getOrgCountsPerUser } from "@/data/dataAccessLayer";
 
 
 export default async function AdminPage() {

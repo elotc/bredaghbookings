@@ -1,5 +1,4 @@
 import SitePageMessage from "@/components/general/SitePageMessage";
-import { RxCheckCircled } from "react-icons/rx";
 
 export default async function AuthSuccessPage() {
     return (

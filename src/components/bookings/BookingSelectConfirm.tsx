@@ -2,7 +2,7 @@
 
 import { FacilityBooking, FacilityList, ScheduleFacilityBlock, UserRole } from "@/data/definitions";
 import { BookingConfirmSection } from "@/components/bookings/BookingConfirm";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import BookingSelectSection from "./BookingSelect";
 import SitePageMessage from "../general/SitePageMessage";
 import { BookingContext } from "./BookingContext";
@@ -16,6 +16,9 @@ export default function BookingSelectConfirm({ blocks, bookings, facilities, aut
     }) {
 
     const { fullTeamName } = useContext(BookingContext);
+    const [hideSelectPage, setHideSelectPage] = useState<boolean>(false);
+    const [hideConfirmPage, setHideConfirmPage] = useState<boolean>(true);
+
 
     if (authorisers.length === 0) {
         return (
@@ -28,9 +31,6 @@ export default function BookingSelectConfirm({ blocks, bookings, facilities, aut
             />
         );
     }
-
-    const [hideSelectPage, setHideSelectPage] = useState<boolean>(false);
-    const [hideConfirmPage, setHideConfirmPage] = useState<boolean>(true);
 
     function togglePages() {
         setHideSelectPage(!hideSelectPage);

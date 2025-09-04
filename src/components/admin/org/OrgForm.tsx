@@ -31,9 +31,13 @@ export default function OrgForm({ orgType, org, clubId, clubName, groupingId, gr
       <StdFormInput name="name" label="Name" type="text" defaultValue={name} onChange={setName} required />
       <StdFormInput name="abbrev" label="Abbrev" type="text" defaultValue={abbrev} onChange={setAbbrev} required />
 
-      <StdFormSelect name="status" label="Status" onChange={setStatus}
+      <StdFormSelect
+        name="status"
+        label="Status"
+        onChange={(value) => setStatus(String(value))}
         options={Object.values(StdStatus).map(role => ({ value: String(role), label: String(role) }))}
-        defaultValue={status} />
+        defaultValue={status}
+      />
 
       <StdFormHidden name="orgId" defaultValue={org ? org.id : -1} />
       <StdFormHidden name="type" defaultValue={orgType} />

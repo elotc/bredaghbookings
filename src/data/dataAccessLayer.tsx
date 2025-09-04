@@ -1,5 +1,5 @@
 import { db } from '@/data/dbConn';
-import { eq, gt, lt, sql, and, inArray, lte, gte, or } from 'drizzle-orm';
+import { eq, lt, sql, and, inArray, lte, gte, or } from 'drizzle-orm';
 import {
   users as usersTable,
   accounts as accountsTable,
@@ -17,7 +17,7 @@ import {
   booking_comment
 } from '@/data/schema';
 import { alias } from 'drizzle-orm/pg-core';
-import { OrgUsersType, RoleType, UserOrgRole, BaseUser, ClubGroupingTeam, ScheduleFacilityBlock, FacilityBooking, ScheduleBlock, BookingComment, BookingRequest, BookingStatus, Org } from './definitions';
+import { OrgUsersType, RoleType, UserOrgRole, BaseUser, ClubGroupingTeam, ScheduleFacilityBlock, FacilityBooking, ScheduleBlock, BookingComment, BookingRequest, BookingStatus } from './definitions';
 
 // Authentication
 
@@ -136,11 +136,6 @@ export async function updateUser(
   id: string,
   updates: Partial<{ name: string; email: string; status: 'Active' | 'Pending' | 'Archived' }>
 ) {
-  const user: typeof usersTable.$inferInsert = {
-    name: updates.name || '',
-    email: updates.email || '',
-    status: updates.status ?? 'Pending',
-  };
   await db
     .update(usersTable)
     .set(updates)
@@ -166,6 +161,50 @@ export async function getOrgRoleByUserIdOrgId(userId: string, orgId: number) {
         eq(user_org.orgId, orgId))
     );
   return role[0];
+}
+
+export async function getOrgRolesByUserId(userId: string): Promise<UserOrgRole[]> {
+  const club = alias(org, "club");
+  const grouping = alias(org, "grouping");
+  const user = alias(usersTable, "user");
+  const rows = await db.select({
+    userId: user_org.userId,
+    userName: user.name,
+    userEmail: user.email,
+    orgId: user_org.orgId,
+    status: user_org.status,
+    role: user_org.role,
+    orgType: org.type,
+    clubName: club.name,
+    clubId: club.id,
+    groupingName: grouping.name,
+    groupingId: grouping.id,
+    orgName: org.name,
+  })
+    .from(user_org)
+    .innerJoin(user, eq(user_org.userId, user.id))
+    .innerJoin(org, eq(user_org.orgId, org.id))
+    .leftJoin(club, eq(org.clubId, club.id))
+    .leftJoin(grouping, eq(org.groupingId, grouping.id))
+    .where(eq(user_org.userId, userId));
+
+
+  if (rows.length === 0) {
+    console.log("No roles found for userId", userId);
+  }
+
+  const userOrgRoles = rows.map(org => {
+    let fullName = "";
+    if (org.orgType === "Club") {
+      fullName = org.orgName;
+    } else if (org.orgType === "Grouping") {
+      fullName = `${org.clubName} / ${org.orgName}`;
+    } else if (org.orgType === "Team") {
+      fullName = `${org.clubName} / ${org.groupingName} / ${org.orgName}`;
+    }
+    return { ...org, fullName };
+  });
+  return userOrgRoles;
 }
 
 export async function getUserRolesByOrgId(orgId: number): Promise<OrgUsersType[]> {
@@ -218,63 +257,66 @@ export async function getAllTeamsByUserId(userId: string): Promise<ClubGroupingT
       .innerJoin(team, eq(grouping.id, team.groupingId))
       .where(whereClause);
 
+    console.log(`Teams for orgType ${orgType} and orgId ${orgId}:`, teams);
     allTeams = allTeams.concat(teams);
   }
   return allTeams;
 }
 
-
-export async function getOrgRolesByUserId(userId: string): Promise<UserOrgRole[]> {
+export async function getAllTeamsByUserIdOrgId(userId: string, orgId: number): Promise<ClubGroupingTeam[]> {
   const club = alias(org, "club");
   const grouping = alias(org, "grouping");
-  const user = alias(usersTable, "user");
-  let rows = await db.select({
-    userId: user_org.userId,
-    userName: user.name,
-    userEmail: user.email,
-    orgId: user_org.orgId,
-    status: user_org.status,
-    role: user_org.role,
-    orgType: org.type,
-    clubName: club.name,
-    clubId: club.id,
-    groupingName: grouping.name,
-    groupingId: grouping.id,
-    orgName: org.name,
-  })
+  const team = alias(org, "team");
+
+  const orgRole = await db.select(
+    { orgType: org.type }
+  )
     .from(user_org)
-    .innerJoin(user, eq(user_org.userId, user.id))
     .innerJoin(org, eq(user_org.orgId, org.id))
-    .leftJoin(club, eq(org.clubId, club.id))
-    .leftJoin(grouping, eq(org.groupingId, grouping.id))
-    .where(eq(user_org.userId, userId));
+    .where(
+      and(eq(user_org.userId, userId),
+        eq(user_org.orgId, orgId))
+    )
+    .then(rows => rows[0]);
 
+  let allTeams: ClubGroupingTeam[] = [];
 
-  if (rows.length === 0) {
-    console.log("No roles found for userId", userId);
+  let whereClause;
+  if (orgRole.orgType === "Club") {
+    whereClause = eq(club.id, orgId);
+  } else if (orgRole.orgType === "Grouping") {
+    whereClause = eq(grouping.id, orgId);
+  } else if (orgRole.orgType === "Team") {
+    whereClause = eq(team.id, orgId);
   }
 
-  console.log("User Org Roles: for userId", userId, "roles:", rows);
-  const userOrgRoles = rows.map(org => {
-    let fullName = "";
-    if (org.orgType === "Club") {
-      fullName = org.orgName;
-    } else if (org.orgType === "Grouping") {
-      fullName = `${org.clubName} / ${org.orgName}`;
-    } else if (org.orgType === "Team") {
-      fullName = `${org.clubName} / ${org.groupingName} / ${org.orgName}`;
+  const teams: ClubGroupingTeam[] = await db.select(
+    {
+      clubId: club.id,
+      clubName: club.name,
+      groupingId: grouping.id,
+      groupingName: grouping.name,
+      teamId: team.id,
+      teamName: team.name
     }
-    return { ...org, fullName };
-  });
-  console.log("User Org Roles with full names: ", userOrgRoles);
-  return userOrgRoles;
+  ).from(club)
+    .innerJoin(grouping, eq(club.id, grouping.clubId))
+    .innerJoin(team, eq(grouping.id, team.groupingId))
+    .where(whereClause);
+
+  console.log(`Teams for orgType ${orgRole.orgType} and orgId ${orgId}:`, teams);
+  allTeams = allTeams.concat(teams);
+
+  return allTeams;
 }
+
+
 
 export async function getAllOrgRoles(): Promise<UserOrgRole[]> {
   const club = alias(org, "club");
   const grouping = alias(org, "grouping");
   const user = alias(usersTable, "user");
-  let rows = await db.select({
+  const rows = await db.select({
     userId: user_org.userId,
     userName: user.name,
     userEmail: user.email,
@@ -720,9 +762,7 @@ export async function deleteScheduleBlock(id: number) {
 }
 
 // == BOOKINGS ===
-export async function getBookingRequests() {
-  return await db.select().from(booking_request);
-}
+
 
 export async function getBookingRequestById(bookingId: number): Promise<BookingRequest | null> {
   const requestors = alias(usersTable, "requestors");
@@ -737,7 +777,7 @@ export async function getBookingRequestById(bookingId: number): Promise<BookingR
       teamId: booking_request.teamId,
       groupingId: booking_request.groupingId,
       clubId: booking_request.clubId,
-      
+
       status: booking_request.status,
       createdAt: booking_request.createdAt,
       updatedAt: booking_request.updatedAt,
@@ -803,7 +843,7 @@ export async function getBookingRequestsByTeamIds(teamIds: number[]) {
 }
 
 export async function getBookingsByFacilityList(facilityIds: number[], startDate: Date, endDate: Date): Promise<FacilityBooking[]> {
-  // First get the schedule IDs from the facilities
+  
   return await db.select({
     bookingFacilityId: booking_facility.id,
     bookingRequestId: booking_facility.bookingId,
@@ -819,7 +859,7 @@ export async function getBookingsByFacilityList(facilityIds: number[], startDate
     .where(
       and(
         inArray(booking_facility.facilityId, facilityIds),
-        gte(booking_facility.date, startDate.toISOString()),
+        // gte(booking_facility.date, startDate.toISOString()),
         lte(booking_facility.date, endDate.toISOString())
       )
     );
@@ -839,6 +879,7 @@ export async function updateBookingRequest(bookingId: number, updates: Partial<t
 export async function deleteBookingRequest(bookingId: number) {
   await db.delete(booking_request).where(eq(booking_request.bookingId, bookingId));
 }
+
 
 export async function getBookingFacilityCountsPerBookingRequest() {
   const result = await db

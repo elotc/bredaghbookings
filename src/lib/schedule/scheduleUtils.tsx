@@ -1,5 +1,5 @@
 
-import { DailySlots, ScheduleBlockStatus, Slot, SlotStatus, ScheduleBlock, Schedule, ScheduleFacilityBlock, FacilityBooking, BookingStatus } from "@/data/definitions";
+import { DailySlots, ScheduleBlockStatus, Slot, SlotStatus, ScheduleFacilityBlock, FacilityBooking, BookingStatus } from "@/data/definitions";
 import { getNumDays, getNumSlots, getTotalMinutesFromDate, getTotalMinutesFromTimeString, } from "@/lib/schedule/dateTimeUtils"
 
 
@@ -13,18 +13,21 @@ export function buildTimeslots(
   blocks: ScheduleFacilityBlock[],
   bookings: FacilityBooking[]
 ): DailySlots[] {
-  if (startDate >= endDate) {
-    throw new Error("Start date must be before end date");
-  }
-  const timeSlots: DailySlots[] = [];
-  const numDays = getNumDays(startDate, endDate);
-  for (let i = 0; i < numDays; i++) {
-    const currentDate = new Date(startDate);
-    currentDate.setDate(currentDate.getDate() + i);
-    const dailySlots: Slot[] = buildDailySlots(currentDate, slotDurationMins, startHour, endHour, blocks, bookings);
-    timeSlots.push({ date: currentDate, slots: dailySlots });
-  }
-  return timeSlots;
+
+    if (startDate >= endDate) {
+      throw new Error("Start date must be before end date");
+    }
+
+    const timeSlots: DailySlots[] = [];
+    const numDays = getNumDays(startDate, endDate);
+
+    for (let i = 0; i < numDays; i++) {
+        const currentDate = new Date(startDate);
+        currentDate.setDate(currentDate.getDate() + i);
+        const dailySlots: Slot[] = buildDailySlots(currentDate, slotDurationMins, startHour, endHour, blocks, bookings);
+        timeSlots.push({ date: currentDate, slots: dailySlots });
+    }
+    return timeSlots;
 }
 
 export function buildDailySlots(
@@ -61,10 +64,10 @@ export function buildDailySlots(
 
     const slot: Slot = {
       slotId: slotStart.getTime(),
-      status: blockStatus === ScheduleBlockStatus.CLOSED 
-        ? SlotStatus.CLOSED 
-        : blockStatus === ScheduleBlockStatus.AVAILABLE 
-          ? SlotStatus.AVAILABLE 
+      status: blockStatus === ScheduleBlockStatus.CLOSED
+        ? SlotStatus.CLOSED
+        : blockStatus === ScheduleBlockStatus.AVAILABLE
+          ? SlotStatus.AVAILABLE
           : SlotStatus.ENQUIRE,
       teamId: -1,
       label: "",
@@ -83,13 +86,14 @@ export function buildDailySlots(
       );
     });
     if (matchingBooking) {
-      slot.status = matchingBooking.status === BookingStatus.REQUESTED 
-        ? SlotStatus.REQUESTED 
-        : matchingBooking.status === BookingStatus.APPROVED 
-          ? SlotStatus.BOOKED 
-          : SlotStatus.AVAILABLE;
-      slot.teamId = matchingBooking.teamId;
-      slot.label = matchingBooking.bookingRequestDescription || "Booked";
+      if( matchingBooking.status === BookingStatus.REQUESTED || matchingBooking.status === BookingStatus.APPROVED) {
+        slot.status = matchingBooking.status === BookingStatus.REQUESTED ? SlotStatus.REQUESTED : SlotStatus.BOOKED;
+        slot.teamId = matchingBooking.teamId;
+        slot.label = matchingBooking.bookingRequestDescription;
+      } else {
+        slot.status = SlotStatus.AVAILABLE;
+        slot.label = "available";
+      }
     }
 
     dailySlots.push(slot);

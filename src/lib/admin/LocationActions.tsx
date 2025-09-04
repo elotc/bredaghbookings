@@ -1,6 +1,6 @@
 'use server';
 
-import { createLocation, createFacility, updateLocation, deleteLocation, updateFacility, deleteFacility, getLocationById } from '@/data/dataAccessLayer';
+import { createLocation, updateLocation, deleteLocation, getLocationById } from '@/data/dataAccessLayer';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 

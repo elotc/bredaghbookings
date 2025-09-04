@@ -59,7 +59,11 @@ export async function duplicateScheduleBlockAction(id: number, primaryId?: numbe
         return block;
       });
 
-    await createScheduleBlock({ ...block, id: undefined });
+    await createScheduleBlock({ 
+      ...block, 
+      id: undefined, 
+      status: block.status as ScheduleBlockStatus 
+    });
   } catch (err: any) {
     return { error: err.message || "Unknown error" };
   }

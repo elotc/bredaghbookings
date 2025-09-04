@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { UserSelectorContextProvider } from "@/components/auth/UserOrgContext";
+import SiteHeader from "@/components/general/SiteHeader";
 
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], });
@@ -21,6 +22,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+         <SiteHeader />
         <div className="flex min-h-screen min-w-full flex-col">
           <UserSelectorContextProvider>
             {children}

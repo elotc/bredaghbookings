@@ -1,9 +1,9 @@
 
-import { getAuthUserDetails } from "@/lib/auth/getAuthUserDetails";
 import SiteLogo from "@/components/general/SiteLogo";
 import { SignOutButton } from "../auth/sign-out-button";
+import Link from "next/link";
 
-export default async function SiteHeader({ children }: { children?: React.ReactNode }) {
+export default async function SiteHeader() {
 
   return (
     <header className="w-full px-6 py-3 bg-bredagh-maroon text-bredagh-white">
@@ -16,6 +16,7 @@ export default async function SiteHeader({ children }: { children?: React.ReactN
           </h1>
         </div>
         <div>
+          <Link className="text-bredagh-white hover:underline" href="/home">Home</Link>
           <SignOutButton />
         </div>
       </div>

@@ -1,31 +1,12 @@
 "use client";
 
 import { DailySlots } from "@/data/definitions";
-import { SlotButton } from "@/components/admin/schedule/SlotButton";
-import { SelectedSlot } from "@/components/bookings/BookingContext";
+import { SlotButton } from "@/components/bookings/SlotButton";
 
-export default function DailySlotsView({ dailySlots, slots, setSlots, facilityId }: 
-    { 
-        dailySlots: DailySlots[]; 
-        slots: SelectedSlot[]; 
-        setSlots: (slots: SelectedSlot[]) => void; 
-        facilityId: number 
+export default function DailySlotsView({ dailySlots }:
+    {
+        dailySlots: DailySlots[];
     }) {
-
-    function handleSelect(slotId: number) {
-        
-        const existingSlot = slots.find(slot => slot.slotId === slotId && slot.facilityId === facilityId);
-        
-        if (existingSlot) {
-            setSlots(slots.filter(slot => !(slot.slotId === slotId && slot.facilityId === facilityId)));
-        } else {
-            setSlots([...slots, { facilityId, slotId }]);
-        }
-    }
-
-    const selectedSlotIds = slots
-        .filter(slot => slot.facilityId === facilityId)
-        .map(slot => slot.slotId);
 
     return (
         <div className="overflow-x-auto">
@@ -39,7 +20,7 @@ export default function DailySlotsView({ dailySlots, slots, setSlots, facilityId
                                     key={day.date.toString()}
                                     className="px-4 py-2 border-b font-semibold text-xs"
                                 >
-                                    {day.date.toLocaleDateString()}
+                                    {day.date.toLocaleDateString(undefined, { weekday: "short" })} {day.date.toLocaleDateString()}
                                 </th>
                             ))}
                         </tr>
@@ -62,12 +43,12 @@ export default function DailySlotsView({ dailySlots, slots, setSlots, facilityId
                                 {dailySlots.map((day) => (
                                     <td
                                         key={day.date.toString() + rowIdx}
-                                        className="px-4 py-2 border-b align-top" 
+                                        className="px-4 py-2 border-b align-top"
                                     >
-                                        <SlotButton 
-                                            slot={day.slots[rowIdx]} 
-                                            selectedSlots={selectedSlotIds} 
-                                            onSelect={handleSelect} 
+                                        <SlotButton
+                                            slot={day.slots[rowIdx]}
+                                            selectedSlots={[]}
+                                            onSelect={() => { }}
                                         />
                                     </td>
                                 ))}
@@ -77,5 +58,5 @@ export default function DailySlotsView({ dailySlots, slots, setSlots, facilityId
                 </table>
             </div>
         </div>
-    );
+    )
 }

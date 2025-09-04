@@ -1,7 +1,7 @@
 import { getFacilitiesByLocationId, getLocationById } from "@/data/dataAccessLayer";
 import FacilityTable from "@/components/admin/facility/FacilityTable";
 
-export default async function FacilitiesPage({ params }: { params: { id: number } }) {
+export default async function FacilitiesPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params;
   const location = await getLocationById(id);
   const facilities = await getFacilitiesByLocationId(id);

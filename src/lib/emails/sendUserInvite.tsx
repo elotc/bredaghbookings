@@ -13,13 +13,13 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendUserInvite(toName: string, toEmail: string, fromName: string, fromEmail: string) {
     log('Sending user invite:', 'info', toName + '|' + toEmail + '|' + fromName + '|' + fromEmail);
     try {
-        let emailContent = InviteUserEmail({
+        const emailContent = InviteUserEmail({
             username: toName,
             invitedByUsername: fromName,
             relatingTo: "Bredagh Bookings",
             inviteLink: baseUrl + "/auth/sign-in",
         });
-        let emailSubject = 'Bredagh Booking App Membership Invite';
+        const emailSubject = 'Bredagh Booking App Membership Invite';
 
         const { data, error } = await resend.emails.send({
             from: `Bredagh <onboarding@bredagh.tolemics.com>`,

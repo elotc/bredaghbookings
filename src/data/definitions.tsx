@@ -1,4 +1,4 @@
-import { location, facility, org, schedule, booking_request } from "@/data/schema";
+import { location, facility, org, schedule } from "@/data/schema";
 
 // ENUMS
 
@@ -46,7 +46,6 @@ export type FacilityList = {
     scheduleId: number;
     scheduleName: string | null;
 };
-
 
 
 // == ORGANISATIONS ==
@@ -304,6 +303,18 @@ export type FacilityBooking = {
     endTime: string;
     status: SlotStatus | string;
 };
+
+/*
+id: booking_facility.id,
+      bookingId: booking_facility.bookingId,
+      facilityId: booking_facility.facilityId,
+      date: booking_facility.date,
+      startTime: booking_facility.startTime,
+      endTime: booking_facility.endTime,
+      status: booking_facility.status,
+      description: booking_request.description,
+*/
+
 
 export type BookingFacility = {
     id: number;

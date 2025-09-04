@@ -11,7 +11,7 @@ export async function sendBookingUpdate(toEmails: string[], relatingTo: string, 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     try {
-        let emailContent = BookingUpdateEmail({
+        const emailContent = BookingUpdateEmail({
             fromName: fromName,
             relatingTo: relatingTo,
             label: label,
@@ -19,9 +19,9 @@ export async function sendBookingUpdate(toEmails: string[], relatingTo: string, 
             bookingLink: baseUrl + link,
         });
 
-        let emailSubject = 'Bredagh Booking: ' + relatingTo;
+        const emailSubject = 'Bredagh Booking: ' + relatingTo;
 
-        const { data, error } = await resend.emails.send({
+        const { error } = await resend.emails.send({
             from: `Bredagh <bookings@bredagh.tolemics.com>`,
             to: toEmails,
             subject: emailSubject,

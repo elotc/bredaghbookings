@@ -3,8 +3,10 @@ import BookingSelectConfirm from "@/components/bookings/BookingSelectConfirm";
 import { getBookingsByFacilityList, getFacilitiesByIds, getScheduleBlocksByFacilityList, getTeamAuthorisers } from "@/data/dataAccessLayer";
 import { FacilityBooking, FacilityList, ScheduleFacilityBlock, UserRole } from "@/data/definitions";
 
-export default async function BookingSelectPage({ params }: { params: { userId: string, facilityIds: string, startDate: Date, endDate: Date, teamId: number } }) {
-    const { userId, facilityIds, startDate, endDate, teamId } = await params;
+export default async function BookingSelectPage({ params }
+    : { params: Promise<{ facilityIds: string, startDate: Date, endDate: Date, teamId: number }> }) {
+        
+    const { facilityIds, startDate, endDate, teamId } = await params;
 
     const decodedFacilityIds = decodeURIComponent(facilityIds).split('|').map(id => Number(id));
 

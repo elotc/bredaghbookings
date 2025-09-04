@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { UserOrgContext } from "../auth/UserOrgContext";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import MenuButton from "./MenuButton";
 import SitePageMessage from "../general/SitePageMessage";
 
@@ -28,22 +28,25 @@ export default function DashboardNav({ children }: { children?: React.ReactNode 
     return (
         <main>
             <div className="flex flex-1 flex-col justify-center items-center gap-4 px-2 py-8 sm:gap-8 sm:px-4">
+    
+                 <MenuButton
+                    type="six"
+                    label="Calendar View"
+                    onClick={() => { console.log('Redirecting to Calendar View'); redirect('/facilityBookings'); }}
+                />
+                
                 {isEditor && (
                     <MenuButton
                         type="three"
                         label="Book A Facility"
-                        onClick={() => { redirect('/bookings/' + thisUserOrg.userId + '/create/'); }}
+                        onClick={() => { redirect('/bookings/' + thisUserOrg.userId + '/' + thisUserOrg.orgId + '/create/'); }}
                     />
                 )}
-                <MenuButton
-                    type="six"
-                    label="Calendar View"
-                    onClick={() => { redirect('/bookings/' + thisUserOrg.userId + '/create/'); }}
-                />
+               
                 <MenuButton
                     type="six"
                     label="My Bookings"
-                    onClick={() => { redirect("/bookings/" + thisUserOrg.userId) }}
+                    onClick={() => { redirect("/bookings/" + thisUserOrg.userId + '/' + thisUserOrg.orgId) }}
                 />
                 {isAdmin && (
                     <MenuButton

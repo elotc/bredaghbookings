@@ -1,10 +1,11 @@
 "use client";
 
 import { StdTabUpdInlBtn, StdTabDelInlBtn, StdTabTh, StdTabTd, StdTabClass, StdTabTitle, StdTabNavInlBtn, StdTabActionTd, StdTabDupInlBtn, StdTabCalInlBtn } from "@/components/general/StdTable";
+import { ScheduleList } from "@/data/definitions";
 import { deleteScheduleAction, duplicateScheduleAction } from "@/lib/admin/ScheduleActions";
 import { useState } from "react";
 
-export default function ScheduleTable({ schedules }: { schedules: any[] }) {
+export default function ScheduleTable({ schedules }: { schedules: ScheduleList[] }) {
   const [error, setError] = useState<string | null>(null);
   return (
     <main className="max-w-4xl mx-auto py-8">

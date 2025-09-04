@@ -1,6 +1,6 @@
 "use client";
 
-import { StdTabDelInlBtn, StdTabTh, StdTabTd, StdTabClass, StdTabUpdInlBtn, StdTabTitle, StdTabDupInlBtn, StdTabNavInlBtn, StdTabError, StdTabActionTd, StdTabNavBtn, StdTabBtnBar } from "@/components/general/StdTable";
+import { StdTabTh, StdTabTd, StdTabClass,  StdTabTitle, StdTabNavInlBtn, StdTabActionTd, StdTabNavBtn, StdTabBtnBar } from "@/components/general/StdTable";
 import { BookingRequest } from "@/data/definitions";
 
 export default function BookingTable({ bookings }: { bookings: BookingRequest[] }) {

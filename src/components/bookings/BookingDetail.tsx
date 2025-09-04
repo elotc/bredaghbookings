@@ -1,22 +1,26 @@
 "use client";
 
 import { BaseUser, BookingComment, BookingFacility, BookingRequest } from "@/data/definitions";
-import { StdFormCancelBtn, StdForm, StdFormInput, StdFormMetaText, StdFormSelect, StdFormSubmitBtn, StdFormFieldError, StdFormButtonBar, StdFormHidden, StdFormError, StdFormDivider, StdFormClickBtn } from "@/components/general/StdForm";
-import { StdTabDelInlBtn, StdTabTh, StdTabTd, StdTabClass, StdTabUpdInlBtn, StdTabTitle, StdTabDupInlBtn, StdTabBtnBar, StdTabNavBtn, StdTabActionTd } from "@/components/general/StdTable";
+import { StdFormCancelBtn, StdForm, StdFormInput, StdFormMetaText, StdFormSubmitBtn,  StdFormButtonBar, StdFormHidden, StdFormError, StdFormDivider, StdFormClickBtn } from "@/components/general/StdForm";
+import { StdTabTh, StdTabTd } from "@/components/general/StdTable";
 
 import { useActionState, useContext, useEffect, useState } from "react";
 import { UserOrgContext } from "@/components/auth/UserOrgContext";
-import SitePageMessage from "@/components/general/SitePageMessage";
 import { updateBookingRequestAction } from "@/lib/bookings/BookingRequestActions";
+import { redirect } from "next/navigation";
 
 
 export default function BookingDetail({ bookingRequest, bookingFacilities, bookingComments, requestor }
     : { bookingRequest: BookingRequest, bookingFacilities: BookingFacility[], bookingComments: BookingComment[], requestor: BaseUser }) {
 
     const { thisUserOrg, userOrgs } = useContext(UserOrgContext);
-    if (!thisUserOrg) return (
-        <SitePageMessage headline="Oops - your credentials are missing" message="Please log in again." label="Login" link="/home" isError={true} />
-    );
+
+    useEffect(() => {
+        if (!thisUserOrg || !userOrgs) {
+            console.log("No user organization context, redirecting to role selection.");
+            redirect( "/auth/sign-in" );
+        }
+    }, [thisUserOrg, userOrgs, bookingRequest]);
 
     const [formState, formAction] = useActionState(updateBookingRequestAction, { error: "" });
 
@@ -41,7 +45,7 @@ export default function BookingDetail({ bookingRequest, bookingFacilities, booki
     useEffect(() => {
         setIsRoleAuthorised(thisUserOrg?.role === "Admin" || thisUserOrg?.role === "Editor");
         setIsOrgAuthorised(userOrgs?.some(org => (org.clubId === bookingRequest.clubId || org.groupingId === bookingRequest.groupingId)) || false);
-    }, [thisUserOrg, userOrgs, bookingRequest.teamId]);
+    }, [thisUserOrg, userOrgs, bookingRequest, setIsOrgAuthorised, setIsRoleAuthorised]);
 
     const [comment, setComment] = useState<string>("");
 
@@ -55,8 +59,9 @@ export default function BookingDetail({ bookingRequest, bookingFacilities, booki
             <StdFormHidden name="requestorEmail" defaultValue={bookingRequest.requestorEmail ? bookingRequest.requestorEmail : 'unknown'} />
             <StdFormHidden name="approverId" defaultValue={bookingRequest.approverId ? bookingRequest.approverId : "unset"} />
             <StdFormHidden name="approverEmail" defaultValue={bookingRequest.approverEmail ? bookingRequest.approverEmail : 'unknown'} />
-            <StdFormHidden name="updaterId" defaultValue={thisUserOrg.userId} />
-            <StdFormHidden name="updaterEmail" defaultValue={thisUserOrg.userEmail ? thisUserOrg.userEmail : 'unknown'} />
+            <StdFormHidden name="updaterId" defaultValue={thisUserOrg?.userId ? thisUserOrg?.userId : 'unknown'} />
+            <StdFormHidden name="updaterOrgId" defaultValue={thisUserOrg?.orgId ? thisUserOrg?.orgId : 'unknown'} />
+            <StdFormHidden name="updaterEmail" defaultValue={thisUserOrg?.userEmail ? thisUserOrg?.userEmail : 'unknown'} />
             <StdFormHidden name="originalStatus" defaultValue={originalStatus} />
 
             <StdFormInput name="description" label="Description" type="text" defaultValue={bookingRequest.description} readOnly />
@@ -135,7 +140,7 @@ export default function BookingDetail({ bookingRequest, bookingFacilities, booki
             </StdFormButtonBar>
 
             <StdFormButtonBar>
-                <StdFormCancelBtn backRef={`/bookings/${thisUserOrg?.userId}`} />
+                <StdFormCancelBtn backRef={`/bookings/${thisUserOrg?.userId}/${thisUserOrg?.orgId}`} />
                 <StdFormSubmitBtn disabled={false}> {"Submit"} </StdFormSubmitBtn>
             </StdFormButtonBar>
 

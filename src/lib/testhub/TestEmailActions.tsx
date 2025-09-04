@@ -1,5 +1,5 @@
 
-import { sendBookingAck } from "../emails/sendBookingUpdate";
+import { sendBookingUpdate } from "../emails/sendBookingUpdate";
 import { sendUserInvite } from "../emails/sendUserInvite";
 import { sendVerificationRequest } from "../emails/sendVerificationRequest";
 
@@ -12,9 +12,9 @@ export async function sendTestEmail(prevState: any, formData: FormData) {
         if (typeof userName !== "string" || typeof email !== "string") {
             throw new Error("Invalid form data");
         }
-        if (emailType == "BookingAck") {
-            console.log("Sending booking acknowledgment email");
-            await sendBookingAck(userName, email, "noreply@bredagh.tolemics.com");
+        if (emailType == "BookingUpdate") {
+            console.log("Sending booking update email");
+            await sendBookingUpdate([email], "===Relating To===", "===label===", "===message===", userName, "/home");
         } else if (emailType == "UserInvite") {
             console.log("Sending user invite email");
             await sendUserInvite(userName, email, "Bredagh Admin", "noreply@bredagh.tolemics.com");

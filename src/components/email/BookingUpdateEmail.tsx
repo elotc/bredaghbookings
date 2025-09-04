@@ -1,4 +1,4 @@
-import { Body, Button, Column, Container, Head, Heading, Hr, Html, Img, Link, Preview, Row, Section, Tailwind, Text, } from '@react-email/components';
+import { Body, Button, Container, Head, Heading, Html, Img, Preview, Section, Tailwind, Text, } from '@react-email/components';
 
 interface BookingRequestEmailProps {
   fromName: string;

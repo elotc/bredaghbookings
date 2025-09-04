@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
-import DailySlotsView from "@/components/admin/schedule/DailySlotsView";
+import DailySlotsView from "@/components/bookings/DailySlotsView";
 import { ControlPanel } from "@/components/bookings/ControlPanel";
 import { buildTimeslots } from "@/lib/schedule/scheduleUtils";
 import { BookingContext } from "@/components/bookings/BookingContext";
@@ -21,7 +21,7 @@ export default function BookingSelectSection({ blocks, bookings, facilities, hid
         togglePages: () => void;
     }) {
 
-    const { startDate, endDate, focusDate, setFocusDate, slots, setSlots, teamId, requestorId, fullTeamName } = useContext(BookingContext);
+    const { startDate, endDate, focusDate, setFocusDate, slots, setSlots, teamId, requestorId } = useContext(BookingContext);
     const { thisUserOrg } = useContext(UserOrgContext);
 
     if (!thisUserOrg) { redirect("/auth/sign-in"); }

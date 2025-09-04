@@ -1,7 +1,7 @@
 'use server';
 
-import { createBookingRequest, updateBookingRequest, deleteBookingRequest, getBookingRequests, getBookingRequestById, getScheduleBlocksByFacilityList, createBookingFacility, createBookingComment, getTeamAuthorisers, getUserById, updateBookingFacilityStatusByBookingId } from '@/data/dataAccessLayer';
-import { BookingStatus, BookingType, SlotStatus } from '@/data/definitions';
+import { createBookingRequest, updateBookingRequest, deleteBookingRequest, createBookingFacility, createBookingComment, getTeamAuthorisers, getUserById, updateBookingFacilityStatusByBookingId } from '@/data/dataAccessLayer';
+import { BookingStatus, BookingType } from '@/data/definitions';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { sendBookingUpdate } from '../emails/sendBookingUpdate';
@@ -9,6 +9,7 @@ import { sendBookingUpdate } from '../emails/sendBookingUpdate';
 export async function bookingCriteriaAction(prevState: any, formData: FormData) {
     console.log("Booking criteria action called with formData:", formData);
     const userId = formData.get('userId');
+    const orgId = formData.get('orgId');
     const teamId = formData.get('teamId');
     const startDate = formData.get('startDate') as string;
     const endDate = formData.get('endDate') as string;
@@ -20,7 +21,7 @@ export async function bookingCriteriaAction(prevState: any, formData: FormData) 
         return { error: err.message || "Unknown error" };
     }
 
-    redirect('/bookings/' + userId + '/create/' + facilities.join('|') + '/' + startDate + '/' + endDate + '/' + teamId);
+    redirect('/bookings/' + userId + '/' + orgId + '/create/' + facilities.join('|') + '/' + startDate + '/' + endDate + '/' + teamId);
 }
 
 export async function bookingConfirmAction(prevState: any, formData: FormData) {
@@ -50,12 +51,12 @@ export async function bookingConfirmAction(prevState: any, formData: FormData) {
         };
         const bookingId = await createBookingRequest(bookingRequest);
 
-        for (let slot of slots) {
-            let date = new Date(Number(slot.split('|')[1]));
-            let startDate = new Date(date);
-            let endDate = new Date(startDate.getTime() + 30 * 60000); // 30 minutes in ms
+        for (const slot of slots) {
+            const date = new Date(Number(slot.split('|')[1]));
+            const startDate = new Date(date);
+            const endDate = new Date(startDate.getTime() + 30 * 60000); // 30 minutes in ms
 
-            let bookingFacility = {
+            const bookingFacility = {
                 bookingId: bookingId[0].bookingId,
                 facilityId: Number(slot.split('|')[0]),
                 date: startDate.toISOString().split('T')[0],
@@ -86,7 +87,7 @@ export async function bookingConfirmAction(prevState: any, formData: FormData) {
                 `A new booking request has been submitted by ${requestor.name}.`,
                 `Please review and approve/reject the request.`,
                 requestor.email ? requestor.email : 'unknown',
-                '/bookings/view/' + bookingId[0].bookingId
+                '/external/bookings/' + bookingId[0].bookingId
             );
         }
     } catch (err: any) {
@@ -100,18 +101,17 @@ export async function updateBookingRequestAction(prevState: any, formData: FormD
     console.log("Update booking request action called with formData:", formData);
     const bookingId = formData.get('bookingId') as string;
     const bookingDescription = formData.get('bookingDescription') as string;
-    const teamId = formData.get('teamId') as string;
     const status = formData.get('status') as string;
     const comment = formData.get('comment') as string;
     const updaterEmail = formData.get('updaterEmail') as string;
     const updaterId = formData.get('updaterId') as string;
-    const requestorId = formData.get('requestorId') as string;
+    const updaterOrgId = formData.get('updaterOrgId') as string;
     const requestorEmail = formData.get('requestorEmail') as string;
     const originalStatus = formData.get('originalStatus') as string;
 
     try {
         if (originalStatus !== status) {
-            let bookingRequestUpdates: { status: BookingStatus; approverId?: string } = {
+            const bookingRequestUpdates: { status: BookingStatus; approverId?: string } = {
                 status: status as BookingStatus,
             };
 
@@ -131,7 +131,7 @@ export async function updateBookingRequestAction(prevState: any, formData: FormD
                 'Status Change',
                 `Booking request has been ${status.toLowerCase()}.`,
                 updaterEmail ? updaterEmail : 'unknown',
-                '/bookings/view/' + bookingId
+                '/external/bookings/' + bookingId
             );
         }
         if (comment && comment.trim() !== "") {
@@ -146,22 +146,13 @@ export async function updateBookingRequestAction(prevState: any, formData: FormD
                 `A new comment has been added:`,
                 comment,
                 updaterEmail ? updaterEmail : 'unknown',
-                '/bookings/view/' + bookingId
+                '/external/bookings/' + bookingId
             );
         }
     } catch (err: any) {
         return { error: err.message || "Unknown error" };
     }
 
-    revalidatePath('/bookings/' + updaterId);
-    redirect('/bookings/' + updaterId);
-}
-
-export async function deleteBookingRequestAction(id: number) {
-    try {
-        await deleteBookingRequest(id);
-    } catch (err: any) {
-        return { error: err.message || "Unknown error" };
-    }
-    revalidatePath('/bookings');
+    revalidatePath('/bookings/' + updaterId + '/' + updaterOrgId);
+    redirect('/bookings/' + updaterId + '/' + updaterOrgId);
 }

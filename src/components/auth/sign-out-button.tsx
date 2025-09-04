@@ -1,7 +1,6 @@
 "use client"
 
 import { handleSignOut } from "@/lib/auth/signOutServerAction";
-import { useRouter } from "next/navigation";
 
 export function SignOutButton(props: {
     className?: string;

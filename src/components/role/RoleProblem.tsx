@@ -24,9 +24,9 @@ export default function RoleProblem({ type }: { type: "userSetup" | "roleSetup" 
             {type === "roleSetup" && (
                 <SitePageMessage
                     headline="Uh-oh! We have a problem - you don't have any permissions."
-                    message="Click on link to select a role or contact your administrator to get assigned a role."
-                    label="Select Role"
-                    link="/role"
+                    message="Try logging in again - or contact your administrator."
+                    label="Login"
+                    link="/auth/sign-in"
                     isError={true}
                     actionBtnLabel="Clear Cache"
                     btnAction={clearCache} />

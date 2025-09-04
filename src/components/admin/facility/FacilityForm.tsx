@@ -1,12 +1,12 @@
 "use client";
 
-import { StdFormCancelBtn, StdForm, StdFormInput, StdFormMetaText, StdFormSelect, StdFormSubmitBtn, StdFormFieldError, StdFormButtonBar, StdFormHidden, StdFormError } from "@/components/general/StdForm";
+import { StdFormCancelBtn, StdForm, StdFormInput, StdFormSelect, StdFormSubmitBtn, StdFormFieldError, StdFormButtonBar, StdFormHidden, StdFormError } from "@/components/general/StdForm";
 import { Location, ScheduleList, FacilityList } from "@/data/definitions";
 import { facilityAction } from "@/lib/admin/FacilityActions";
 import { useActionState, useState } from "react";
 
 export default function FacilityForm({ location, facilities, facility, schedules }: 
-  { location: Location, facilities: FacilityList[], facility?: any, schedules: ScheduleList[] }) {
+  { location: Location, facilities: FacilityList[], facility?: FacilityList, schedules: ScheduleList[] }) {
   const [name, setName] = useState(facility?.name || "");
   const [scheduleId, setScheduleId] = useState(facility?.scheduleId || "");
   const [abbrev, setAbbrev] = useState(facility?.abbrev || "");
@@ -53,14 +53,14 @@ export default function FacilityForm({ location, facilities, facility, schedules
         name="slotDurationMins" 
         label="Slot Duration (mins)" 
         type="number" 
-        defaultValue={slotDuration} 
-        onChange={setSlotDuration} />
+        defaultValue={String(slotDuration)} 
+        onChange={value => setSlotDuration(Number(value))} />
       <StdFormInput 
         name="concurrentUseNumber" 
         label="Concurrent Use" 
         type="number" 
-        defaultValue={concurrentUse} 
-        onChange={setConcurrentUse} 
+        defaultValue={String(concurrentUse)} 
+        onChange={value => setConcurrentUse(Number(value))} 
         required />
       <StdFormButtonBar>
         <StdFormCancelBtn backRef={`/admin/locations/${location.id}/facilities`} />
@@ -74,9 +74,6 @@ export default function FacilityForm({ location, facilities, facility, schedules
           {facility ? "Update Facility" : "Create Facility"}
         </StdFormSubmitBtn>
       </StdFormButtonBar>
-
-      <StdFormMetaText label="Last Update At" value={facility?.updatedAt ? facility.updatedAt.toString() : ""} />
-      <StdFormMetaText label="Created At" value={facility?.createdAt ? facility.createdAt.toString() : ""} />
 
     </StdForm>
   );

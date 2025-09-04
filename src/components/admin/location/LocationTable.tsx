@@ -1,6 +1,6 @@
 "use client";
 
-import { StdTabDelInlBtn, StdTabTh, StdTabTd, StdTabClass, StdTabUpdInlBtn, StdTabTitle, StdTabDupInlBtn, StdTabNavInlBtn, StdTabError, StdTabActionTd } from "@/components/general/StdTable";
+import { StdTabDelInlBtn, StdTabTh, StdTabTd, StdTabClass, StdTabUpdInlBtn, StdTabTitle, StdTabDupInlBtn, StdTabNavInlBtn, StdTabActionTd } from "@/components/general/StdTable";
 import { LocationList, CountsType } from "@/data/definitions";
 import { deleteLocationAction, duplicateLocationAction } from "@/lib/admin/LocationActions";
 import { useState } from "react";

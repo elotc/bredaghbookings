@@ -1,6 +1,6 @@
 "use client";
 
-import { StdTabTd, StdTabTh, StdTabUpdInlBtn, StdTabDelInlBtn, StdTabClass, StdTabTitle, StdTabNavInlBtn, StdTabBtnBar, StdTabNavBtn, StdTabClickTd, StdTabActionTd } from "@/components/general/StdTable";
+import { StdTabTd, StdTabTh, StdTabUpdInlBtn, StdTabClass, StdTabTitle, StdTabBtnBar, StdTabNavBtn, StdTabActionTd, StdTabDelStrInlBtn } from "@/components/general/StdTable";
 import { deleteOrgRoleAction } from "@/lib/admin/OrgRoleActions";
 import { Org, OrgUsersType } from "@/data/definitions";
 import { useState } from "react";
@@ -34,7 +34,7 @@ export default function OrgRoleTable({ org, club, grouping, users }: { org: Org;
                             <StdTabTd>{user.role}</StdTabTd>
                             <StdTabActionTd>
                                 <StdTabUpdInlBtn updatePageLink={`/admin/orgs/${org.id}/users/${user.userId}/edit`} />
-                                <StdTabDelInlBtn
+                                <StdTabDelStrInlBtn
                                     id={org.id + "|" + user.userId + "|" + user.role}
                                     deleteAction={deleteOrgRoleAction}
                                     onError={(msg: string) => setError(msg)}

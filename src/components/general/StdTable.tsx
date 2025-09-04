@@ -1,5 +1,5 @@
-import { PencilIcon, PlusIcon, TrashIcon, DocumentDuplicateIcon, CalendarDaysIcon } from "@heroicons/react/16/solid";
-import { ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, PlusIcon, TrashIcon, DocumentDuplicateIcon, CalendarDaysIcon, TicketIcon } from "@heroicons/react/16/solid";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import React from "react";
 
@@ -9,7 +9,7 @@ const thClass = "py-2 px-2 border-b text-left";
 const tdClass = "py-1 px-1 border-b";
 const tdActionClass = "py-0 px-1 border-b";
 const tableButtonClass = "inline-flex justify-between items-center mb-1 mx-1 px-2 py-2 rounded hover:bg-black hover:text-yellow-300 transition-colors";
-const tableActionButtonClass = "inline-flex justify-between items-center mb-1 mx-1 px-2 py-2 rounded bg-gray-500 text-white font-semibold hover:bg-black hover:text-yellow-300 transition-colors";
+const tableActionButtonClass = "inline-flex justify-between items-center m-1 px-2 py-2 rounded bg-gray-500 text-white font-semibold hover:bg-black hover:text-yellow-300 transition-colors";
 const createButtonClass = "flex justify-between items-center mb-1 px-2 py-1 rounded bg-[#003366] text-[#FFD700] font-semibold hover:bg-[#002244] hover:text-yellow-300 transition-colors"
 
 export function StdTabTitle({ title, createPageLink, error }: { title: string, createPageLink?: string, error?: string | null }) {
@@ -49,20 +49,27 @@ export function StdTabNavBtn({ ref, label = "Back" }: { ref: string, label?: str
 // == Inline Buttons ==
 export function StdTabUpdInlBtn({ updatePageLink }: { updatePageLink: string }) {
     return (
-        <Link href={updatePageLink} className={tableButtonClass} title="Edit">
-            <PencilIcon className="h-5" />
+        <Link href={updatePageLink} className={tableActionButtonClass} title="Edit">
+            <span className="md:block hidden">Edit</span><PencilIcon className="h-5" />
         </Link>
     );
 }
 
 export function StdTabCalInlBtn({ pageLink }: { pageLink: string }) {
     return (
-        <Link href={pageLink} className={tableButtonClass} title="View Calendar">
-            <CalendarDaysIcon className="h-5" />
+        <Link href={pageLink} className={tableActionButtonClass} title="View Calendar">
+            <span className="md:block hidden">Calendar</span><CalendarDaysIcon className="h-5" />
         </Link>
     );
 }
 
+export function StdTabBkgInlBtn({ pageLink }: { pageLink: string }) {
+    return (
+        <Link href={pageLink} className={tableActionButtonClass} title="View Booking">
+            <span className="md:block hidden">Bookings</span><TicketIcon className="h-5" />
+        </Link>
+    );
+}
 
 export function StdTabNavInlBtn({ actionName, actionPageLink, count }: { actionName: string, actionPageLink: string, count?: number }) {
     return (
@@ -77,7 +84,12 @@ export function StdTabNavInlBtn({ actionName, actionPageLink, count }: { actionN
     );
 }
 
-export function StdTabDelInlBtn({ id, deleteAction, onError, primaryId }: { id: number | string, deleteAction: Function, onError: Function, primaryId?: number | string }) {
+export function StdTabDelInlBtn({ id, deleteAction, onError, primaryId }
+    : { 
+        id: number, 
+        deleteAction: (id: number, primaryId?: number) => Promise<any>, 
+        onError: Function, primaryId?: number }) {
+
     const deleteActionWithId = deleteAction.bind(null, id, primaryId);
     return (
         <button type="submit" className={tableButtonClass} title="Delete"
@@ -90,7 +102,31 @@ export function StdTabDelInlBtn({ id, deleteAction, onError, primaryId }: { id: 
     );
 }
 
-export function StdTabDupInlBtn({ id, duplicateAction, onError, primaryId }: { id: number | string, duplicateAction: Function, onError: Function, primaryId?: number | string }) {
+export function StdTabDelStrInlBtn({ id, deleteAction, onError, primaryId }
+    : { 
+        id: string, 
+        deleteAction: (id: string, primaryId?: string) => Promise<any>, 
+        onError: Function, primaryId?: string }) {
+
+    const deleteActionWithId = deleteAction.bind(null, id, primaryId);
+    return (
+        <button type="submit" className={tableButtonClass} title="Delete"
+            onClick={async () => {
+                const result = await deleteActionWithId();
+                if (result && result.error && onError) { onError(result.error); }
+            }}>
+            <TrashIcon className="h-5" />
+        </button>
+    );
+}
+
+export function StdTabDupInlBtn({ id, duplicateAction, onError, primaryId }
+    : { 
+        id: number, 
+        duplicateAction: (id: number, primaryId?: number) => Promise<any>, 
+        onError: Function, 
+        primaryId?: number }) {
+
     const duplicateActionWithId = duplicateAction.bind(null, id, primaryId);
     return (
         <button type="submit" className={tableButtonClass} title="Duplicate"

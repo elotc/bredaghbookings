@@ -17,6 +17,40 @@ export function getStartOfWeek(date: Date): Date {
   return startOfWeek;
 }
 
+export function getOneWeekForwardFromDate(date: Date): Date {
+  const oneWeekLater = new Date(date);
+  oneWeekLater.setDate(date.getDate() + 7);
+  oneWeekLater.setHours(0, 0, 0, 0);
+  return oneWeekLater;
+}
+
+export function getOneWeekBackFromDate(date: Date): Date {
+  const oneWeekBack = new Date(date);
+  oneWeekBack.setDate(date.getDate() - 7);
+  oneWeekBack.setHours(0, 0, 0, 0);
+  return oneWeekBack;
+}
+
+export function getOneDayBackFromDate(date: Date): Date {
+  const oneDayBack = new Date(date);
+  oneDayBack.setDate(date.getDate() - 1);
+  oneDayBack.setHours(0, 0, 0, 0);
+  return oneDayBack;
+}
+
+export function getOneDayForwardFromDate(date: Date): Date {
+  const oneDayForward = new Date(date);
+  oneDayForward.setDate(date.getDate() + 1);
+  oneDayForward.setHours(0, 0, 0, 0);
+  return oneDayForward;
+}
+
+export function getTodaysDate(): Date {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+}
+
 export function getEndOfWeek(date: Date): Date {
   const endOfWeek = new Date(date);
   endOfWeek.setDate(date.getDate() + (7 - date.getDay()));

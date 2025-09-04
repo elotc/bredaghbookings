@@ -1,6 +1,6 @@
 'use server';
 
-import { createOrg, updateOrg, deleteOrg, getOrgById, getOrgGroupingsByClubId, getOrgTeamsByGroupingId, deleteUserOrgRole, updateUserOrgRole, createUserOrgRole, getUserByEmail, getOrgRoleByUserIdOrgId } from '@/data/dataAccessLayer';
+import { createOrg, updateOrg, deleteOrg, getOrgById, getOrgGroupingsByClubId, getOrgTeamsByGroupingId } from '@/data/dataAccessLayer';
 import { OrgType, StdStatus } from '@/data/definitions';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -80,7 +80,7 @@ export async function deleteOrgAction(id: number) {
   revalidatePath('/admin/orgs');
 }
 
-export async function duplicateOrgAction(id: number) {
+export async function duplicateOrgAction(id: number, primaryId?: number) {
   try {
 
     const org = await getOrgById(id)
@@ -96,16 +96,16 @@ export async function duplicateOrgAction(id: number) {
 
     if (org.type === OrgType.CLUB) {
       for (const grouping of await getOrgGroupingsByClubId(id)) {
-        const { id: __, ...groupingData } = grouping;
+        const { id: _, ...groupingData } = grouping;
         const newGroupingIds = await createOrg({ ...groupingData, clubId: newIds[0].id });
         for (const team of await getOrgTeamsByGroupingId(grouping.id)) {
-          const { id: ___, ...teamData } = team;
+          const { id: _, ...teamData } = team;
           await createOrg({ ...teamData, clubId: newIds[0].id, groupingId: newGroupingIds[0].id });
         }
       }
     } else if (org.type === OrgType.GROUPING) {
       for (const team of await getOrgTeamsByGroupingId(id)) {
-        const { id: ___, ...teamData } = team;
+        const { id: _, ...teamData } = team;
         await createOrg({ ...teamData, groupingId: newIds[0].id });
       }
     }

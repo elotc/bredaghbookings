@@ -27,7 +27,7 @@ export function SlotButton({
         }
     }
 
-    let btnLabel = slot.label || slot.status;
+    const btnLabel = slot.label || slot.status;
 
     return (
         <div>

@@ -1,7 +1,7 @@
 import FacilityForm from "@/components/admin/facility/FacilityForm";
-import { getFacilities, getLocationById, getOrgClubs, getSchedules } from "@/data/dataAccessLayer";
+import { getFacilities, getLocationById, getSchedules } from "@/data/dataAccessLayer";
 
-export default async function CreateFacilityPage({ params }: { params: { id: number } }) {
+export default async function CreateFacilityPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params;
   const location = await getLocationById(id);
   const schedules = await getSchedules();

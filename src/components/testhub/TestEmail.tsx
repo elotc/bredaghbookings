@@ -22,7 +22,7 @@ export default function TestEmail() {
                 { value: "BookingAck", label: "Booking Acknowledgment" },
                 { value: "UserInvite", label: "User Invite" },
                 { value: "VerificationRequest", label: "Verification Request" }
-            ]} defaultValue={emailType} onChange={setEmailType} />
+            ]} defaultValue={emailType} onChange={value => setEmailType(String(value))} />
             <StdFormButtonBar>
                 <StdFormCancelBtn backRef="/" />
                 <StdFormSubmitBtn disabled={

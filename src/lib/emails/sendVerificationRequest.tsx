@@ -3,26 +3,22 @@
 import { Resend } from 'resend';
 import { VerificationRequestEmail } from "@/components/email/VerificationRequestEmail";
 
-const baseUrl = process.env.BASE_URL
-  ? `http://${process.env.BASE_URL}`
-  : 'http://localhost:3000';
-
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendVerificationRequest(params: any) {
-  const { identifier: to, provider, url, theme } = params
+  const { identifier: to, url } = params
 
 
   const { host } = new URL(url)
 
   try {
-    let emailContent = VerificationRequestEmail({
+    const emailContent = VerificationRequestEmail({
       to: to,
       url: url,
       host: host,
     });
 
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: `Bredagh <noreply@bredagh.tolemics.com>`,
       to: [to],
       subject: `Sign in to ${host}`,

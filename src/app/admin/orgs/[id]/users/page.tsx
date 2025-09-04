@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { RoleType, StdStatus } from "@/data/definitions";
 import OrgRoleTable from "@/components/admin/org/OrgRoleTable";
 
-export default async function OrgUsersPage({ params }: { params: { id: string } }) {
+export default async function OrgUsersPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const data = await getOrgClubGroupingById(Number(id));
     const users = await getUserRolesByOrgId(Number(id));

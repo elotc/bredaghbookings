@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { OrgList, OrgType } from "@/data/definitions";
+import { CountsType, OrgList, OrgType } from "@/data/definitions";
 import OrgTable from "@/components/admin/org/OrgTable";
 import { StdMsgNote } from "@/components/general/StdMessage";
 
-export default function ClubGroupingTeamSelector({ orgs, userCounts }: { orgs: OrgList[], userCounts: { org_id: number, user_count: number }[] }) {
+export default function ClubGroupingTeamSelector({ orgs, userCounts }
+    : { orgs: OrgList[], userCounts: CountsType[] }) {
+
     const [selectedClubId, setSelectedClubId] = useState({ id: -1, name: "" });
     const [selectedGroupingId, setSelectedGroupingId] = useState({ id: -1, name: "" });
     const [selectedTeamId, setSelectedTeamId] = useState({ id: -1, name: "" });

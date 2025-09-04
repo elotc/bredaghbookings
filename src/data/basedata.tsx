@@ -1,7 +1,5 @@
 "use server";
-
-import { db } from '@/data/dbConn';
-import { getOrgById, createOrg, createSchedule, createScheduleBlock, createUser, createUserOrgRole, getOrgsByName, getUserByEmail, getOrgRoleByUserIdOrgId, getScheduleByName, getLocationByName, createLocation, createFacility } from '@/data/dataAccessLayer';
+import { createOrg, createSchedule, createScheduleBlock, createUser, createUserOrgRole, getOrgsByName, getUserByEmail, getOrgRoleByUserIdOrgId, getScheduleByName, getLocationByName, createLocation, createFacility } from '@/data/dataAccessLayer';
 
 export async function loadBaseData() {
     let retMsg = "Loading base data... ";

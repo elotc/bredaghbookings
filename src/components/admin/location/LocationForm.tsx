@@ -1,8 +1,8 @@
 "use client";
 
-import { StdFormCancelBtn, StdForm, StdFormInput, StdFormMetaText, StdFormSelect, StdFormSubmitBtn, StdFormFieldError, StdFormHidden, StdFormError, StdFormButtonBar } from "@/components/general/StdForm";
+import { StdFormCancelBtn, StdForm, StdFormInput, StdFormMetaText, StdFormSubmitBtn, StdFormFieldError, StdFormHidden, StdFormError, StdFormButtonBar } from "@/components/general/StdForm";
 import { locationAction } from "@/lib/admin/LocationActions";
-import { Location, LocationList, OrgList } from "@/data/definitions";
+import { Location, LocationList } from "@/data/definitions";
 import { useActionState, useState } from "react";
 
 export default function LocationForm({ locations, location }: { locations: LocationList[], location?: Location }) {

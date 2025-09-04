@@ -3,7 +3,7 @@ import OrgForm from "@/components/admin/org/OrgForm";
 import { notFound } from "next/navigation";
 import { OrgType } from "@/data/definitions";
 
-export default async function EditOrgPage({ params }: { params: { id: string } }) {
+export default async function EditOrgPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const data = await getOrgClubGroupingById(Number(id));
     if (!data) notFound();

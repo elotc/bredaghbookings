@@ -1,5 +1,5 @@
 "use client";
-import { StdFormCancelBtn, StdForm, StdFormHidden, StdFormInput, StdFormMetaText, StdFormNavBtn, StdFormReadOnly, StdFormSelect, StdFormSubmitBtn, StdFormButtonBar, StdFormError, StdFormFieldError } from "@/components/general/StdForm";
+import { StdFormCancelBtn, StdForm, StdFormHidden, StdFormInput, StdFormReadOnly, StdFormSelect, StdFormSubmitBtn, StdFormButtonBar, StdFormError } from "@/components/general/StdForm";
 import { Org, RoleType, BaseUser } from "@/data/definitions";
 import { useActionState } from "react";
 import { orgRoleAction } from "@/lib/admin/OrgRoleActions";
@@ -26,7 +26,12 @@ export default function OrgUserForm({ org, user, userRole }:
                 : <StdFormInput name="email" label="Email" type="email" defaultValue={email} onChange={setEmail} required />
             }
 
-            <StdFormSelect name="role" label="Role" onChange={setRole} defaultValue={role} required
+            <StdFormSelect
+                name="role"
+                label="Role"
+                onChange={value => setRole(String(value))}
+                defaultValue={role}
+                required
                 options={Object.values(RoleType).map(role => ({ value: role, label: role }))}
             />
 

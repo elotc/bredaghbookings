@@ -8,7 +8,7 @@ import { log } from '@/lib/util/logging';
 import { sendUserInvite } from '@/lib/emails/sendUserInvite';
 
 
-export async function userAction(prevState: any, formData: FormData) {
+export async function userAction(prevState: {error: string}, formData: FormData) {
     const id = formData.get('userId') as string;
     const name = formData.get('name');
     const email = formData.get('email');
@@ -21,7 +21,7 @@ export async function userAction(prevState: any, formData: FormData) {
             throw new Error('Invalid form data');
         }
 
-        let user = await getAuthUserDetails();
+        const user = await getAuthUserDetails();
         if (!user || !user.name || !user.email) {
             log("User not authenticated", "error", "User authentication failed");
             throw new Error('User not authenticated');

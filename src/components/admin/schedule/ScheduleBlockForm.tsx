@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { StdForm, StdFormInput, StdFormSelect, StdFormCancelBtn, StdFormSubmitBtn, StdFormMetaText, StdFormHidden, StdFormButtonBar, StdFormError } from "@/components/general/StdForm";
 import { scheduleBlockAction } from "@/lib/admin/ScheduleBlockActions";
-import { Schedule, ScheduleBlock, ScheduleBlockStatus } from "@/data/definitions";
+import { ScheduleBlock, ScheduleBlockStatus } from "@/data/definitions";
 
 export default function ScheduleBlockForm({scheduleId, scheduleBlock}: {scheduleId: number; scheduleBlock?: ScheduleBlock;}) {
   const [startDate, setStartDate] = useState(scheduleBlock?.startDate || "");

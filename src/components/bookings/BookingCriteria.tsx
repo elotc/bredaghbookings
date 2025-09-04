@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useState, useActionState, use } from "react";
+import { useContext, useEffect, useState, useActionState } from "react";
 import { StdForm, StdFormButtonBar, StdFormCancelBtn, StdFormDivider, StdFormError, StdFormHidden, StdFormInput, StdFormSelect, StdFormSubmitBtn } from "../general/StdForm";
 import { UserOrgContext } from "@/components/auth/UserOrgContext";
 import { ClubGroupingTeam, FacilityList } from "@/data/definitions";
@@ -14,7 +14,7 @@ export default function BookingCriteria({ teams, allFacilities }: { teams: ClubG
     const { thisUserOrg } = useContext(UserOrgContext);
     const {
         setRequestorId, teamId, setTeamId, setFullTeamName,
-        groupingId, setGroupingId, clubId, setClubId,
+        setClubId, setGroupingId,
         startDate, setStartDate, endDate, setEndDate,
         facilities, setFacilities
     } = useContext(BookingContext);
@@ -22,93 +22,26 @@ export default function BookingCriteria({ teams, allFacilities }: { teams: ClubG
     useEffect(() => {
         if (!thisUserOrg) {
             console.error("No user org context found, redirecting to sign-in.");
-            redirect("/role/role-error");
+            redirect("/auth/sign-in");
         }
         setRequestorId(thisUserOrg.userId);
     }, [thisUserOrg, setRequestorId]);
 
     const [facilitiesLoading, setFacilitiesLoading] = useState<boolean>(false);
 
-    const [clubOptions, setClubOptions] = useState<any[]>([]);
-    const [groupingOptions, setGroupingOptions] = useState<any[]>([]);
-    const [teamOptions, setTeamOptions] = useState<any[]>([]);
-
-    if (!teams || teams.length === 0) {
-        return <div className="text-red-500">No teams available for booking.</div>;
-    }
-
-    useEffect(() => {
-        if (teams.length === 1) {
-            setClubOptions([{ value: -1, label: "..." }, { value: teams[0].clubId, label: String(teams[0].clubName) }]);
-            setGroupingOptions([{ value: -1, label: "..." }, { value: teams[0].groupingId, label: String(teams[0].groupingName) }]);
-            setTeamOptions([{ value: -1, label: "..." }, { value: teams[0].teamId, label: String(teams[0].teamName) }]);
-            setClubId(teams[0].clubId);
-            setGroupingId(teams[0].groupingId);
-            setTeamId(teams[0].teamId);
-            setFullTeamName(teams[0].clubName + "/" + (teams[0].groupingName + "/" + teams[0].teamName || ""));
-        } else {
-            console.log("Setting club, grouping, and team options based on teams data:", teams);
-            setClubOptions([
-                { value: -1, label: "Select club..." },
-                ...Array.from(
-                    new Map(
-                        teams
-                            .map(team => [team.clubId, { value: String(team.clubId), label: String(team.clubName) }])
-                    ).values()
-                ),
-            ]);
-            if( clubOptions.length === 2 ) {
-                setClubId(clubOptions[1].value);
-            }
-            setGroupingOptions([
-                { value: -1, label: "Select grouping..." },
-                ...Array.from(
-                    new Map(
-                        teams
-                            .filter(team => team.clubId == clubId)
-                            .map(team => [team.groupingId, { value: String(team.groupingId), label: String(team.groupingName) }])
-                    ).values()
-                ),
-            ]);
-            if( groupingOptions.length === 2 ) {
-                setGroupingId(groupingOptions[1].value);
-            }
-            setTeamOptions([
-                { value: -1, label: "Select team..." },
-                ...Array.from(
-                    new Map(
-                        teams
-                            .filter(team => team.groupingId == groupingId)
-                            .map(team => [team.teamId, { value: String(team.teamId), label: String(team.teamName) }])
-                    ).values()
-                ),
-            ]);
-            if( teamOptions.length === 2 ) {
-                setTeamId(teamOptions[1].value);
-            }
-            console.log("Club, Grouping, and Team options set:", { clubOptions, groupingOptions, teamOptions });
-        }
-    }, [teams, clubId, groupingId, teamId, setClubId, setGroupingId, setTeamId, setClubOptions, setGroupingOptions, setTeamOptions]);
-
-    function setClubAndReset(selectedClubId: number) {
-        setClubId(selectedClubId);
-        setGroupingId(-1);
-        setTeamId(-1);
-    }
-
-    function setTeam(selectedTeamId: number) {
-        console.log("Setting team ID to:", selectedTeamId);
-        setTeamId(selectedTeamId);
-        const selectedTeam = teams.find(team => team.teamId === selectedTeamId);
-        setFullTeamName(selectedTeam?.clubName + "/" + (selectedTeam?.groupingName + "/" + selectedTeam?.teamName || ""));
-        console.log("Selected team:", selectedTeam, setFullTeamName);
-    }
-
     useEffect(() => {
         const today = new Date();
         setStartDate(today);
         setEndDate(new Date(today.getFullYear(), today.getMonth() + 3, today.getDate()));
     }, [setStartDate, setEndDate]);
+
+    function setTeam(selectedTeamId: number) {
+        setTeamId(selectedTeamId);
+        const selectedTeam = teams.find(team => team.teamId === selectedTeamId);
+        setFullTeamName(selectedTeam?.clubName + "/" + selectedTeam?.groupingName + "/" + selectedTeam?.teamName );
+        setClubId(selectedTeam?.clubId || -1);
+        setGroupingId(selectedTeam?.groupingId || -1);
+    }
 
     function handleDateChange(date: string, isStart: boolean) {
         const parsedDate = new Date(date);
@@ -138,32 +71,20 @@ export default function BookingCriteria({ teams, allFacilities }: { teams: ClubG
             <StdForm title={"Make a Booking"} action={formAction}>
                 {formState.error && (<StdFormError error={formState.error} />)}
                 <StdFormHidden name="userId" defaultValue={thisUserOrg?.userId || "unset"} />
+                <StdFormHidden name="orgId" defaultValue={thisUserOrg?.orgId || "unset"} />
 
                 <StdFormDivider text="Select Team" />
                 <div className="grid grid-cols-1 XXmd:grid-cols-3 gap-4">
                     <StdFormSelect
-                        name="clubId"
-                        label="Club"
-                        onChange={value => setClubAndReset(Number(value))}
-                        options={clubOptions}
-                        defaultValue={clubId}
-                        readOnly={false}
-                    />
-                    <StdFormSelect
-                        name="groupingId"
-                        label="Code"
-                        onChange={value => setGroupingId(Number(value))}
-                        options={groupingOptions}
-                        defaultValue={groupingId}
-                        readOnly={false}
-                    />
-                    <StdFormSelect
                         name="teamId"
                         label="Team"
                         onChange={value => setTeam(Number(value))}
-                        options={teamOptions}
-                        defaultValue={teamId}
-                        readOnly={false}
+                        options={[
+                            { value: -1, label: "Select team..." },
+                            ...teams.map(team => ({ value: team.teamId, label: team.clubName + "/" + team.groupingName + "/" + team.teamName }))
+                        ]}
+                    defaultValue={teamId}
+                    readOnly={false}
                     />
                 </div>
                 <StdFormDivider text="Select date range for your booking" />
@@ -198,7 +119,7 @@ export default function BookingCriteria({ teams, allFacilities }: { teams: ClubG
                     >
                         {allFacilities.map(facility => (
                             <option
-                                key={facility.id}
+                                key={`Facility-${facility.id}`}
                                 value={facility.id}
                             >
                                 {facility.locationName} / {facility.name}

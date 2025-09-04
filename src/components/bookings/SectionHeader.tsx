@@ -4,8 +4,7 @@ import { useContext } from "react";
 import { BookingContext } from "./BookingContext";
 
 export default function SectionHeader({ thisPageNumber }: { thisPageNumber: number }) {
-  const { pageTitles, setPageTitles } = useContext(BookingContext);
-  const { currentPage, setCurrentPage } = useContext(BookingContext);
+  const { pageTitles } = useContext(BookingContext);
 
   return (
     <div className="text-lg font-bold p-4 bg-bredagh-maroon text-white flex justify-center gap-2">

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useActionState } from "react";
 import { scheduleAction } from "@/lib/admin/ScheduleActions";
-import { StdForm, StdFormInput, StdFormSelect, StdFormCancelBtn, StdFormSubmitBtn, StdFormError, StdFormHidden, StdFormFieldError } from "@/components/general/StdForm";
+import { StdForm, StdFormInput, StdFormCancelBtn, StdFormSubmitBtn, StdFormError, StdFormHidden, StdFormFieldError } from "@/components/general/StdForm";
 import { ScheduleList } from "@/data/definitions";
 
 export default function ScheduleForm({ schedules, schedule }: { schedules: ScheduleList[], schedule?: ScheduleList }) {

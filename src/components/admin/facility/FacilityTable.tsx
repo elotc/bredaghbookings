@@ -1,7 +1,7 @@
 "use client";
 
 import { StdTabDelInlBtn, StdTabTh, StdTabTd, StdTabClass, StdTabUpdInlBtn, StdTabTitle, StdTabDupInlBtn, StdTabBtnBar, StdTabNavBtn, StdTabActionTd } from "@/components/general/StdTable";
-import { Facility, FacilityList } from "@/data/definitions";
+import { FacilityList } from "@/data/definitions";
 import { deleteFacilityAction, duplicateFacilityAction } from "@/lib/admin/FacilityActions";
 import { Location } from "@/data/definitions";
 import { useState } from "react";

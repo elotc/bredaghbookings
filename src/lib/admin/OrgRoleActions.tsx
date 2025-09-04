@@ -34,6 +34,7 @@ export async function orgRoleAction(prevState: any, formData: FormData) {
         return { error: err.message || "Unknown error" };
     }
 
+    revalidatePath('/home');
     revalidatePath('/admin/orgs/' + id + '/users');
     redirect('/admin/orgs/' + id + '/users');
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import { StdTabTd, StdTabTh, StdTabUpdInlBtn, StdTabDelInlBtn, StdTabClass, StdTabTitle, StdTabNavInlBtn, StdTabNavBtn, StdTabBtnBar } from "@/components/general/StdTable";
-import { BaseUser, UserOrgRole, UserOrgsType } from "@/data/definitions";
+import { StdTabTd, StdTabTh, StdTabClass, StdTabTitle, StdTabNavBtn, StdTabBtnBar } from "@/components/general/StdTable";
+import { BaseUser, UserOrgRole } from "@/data/definitions";
 import { useState } from "react";
 
 export default function UserRoleTable({ user, userOrgs, showNav = true }: { user: BaseUser; userOrgs: UserOrgRole[]; showNav?: boolean; }) {

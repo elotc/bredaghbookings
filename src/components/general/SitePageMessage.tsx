@@ -1,3 +1,6 @@
+"use client";
+
+import Link from "next/link";
 import { RxCheckCircled, RxExclamationTriangle } from "react-icons/rx";
 
 export default function SitePageMessage({
@@ -26,9 +29,7 @@ export default function SitePageMessage({
                             {message}
                         </p>
                         <p className="m-6">
-                            <a href={link} className="text-blue-500 hover:underline">
-                                {label}
-                            </a>
+                            <Link className="text-bredagh-white hover:underline" href={link}>{label}</Link>
                         </p>
                     </div>
                     {btnAction && actionBtnLabel && (

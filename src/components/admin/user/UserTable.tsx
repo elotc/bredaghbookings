@@ -1,6 +1,6 @@
 "use client";
 
-import { StdTabTd, StdTabTh, StdTabUpdInlBtn, StdTabDelInlBtn, StdTabClass, StdTabTitle, StdTabNavInlBtn, StdTabActionTd } from "@/components/general/StdTable";
+import { StdTabTd, StdTabTh, StdTabUpdInlBtn, StdTabClass, StdTabTitle, StdTabNavInlBtn, StdTabActionTd, StdTabDelStrInlBtn } from "@/components/general/StdTable";
 import { deleteUserAction } from "@/lib/admin/UserActions";
 import { BaseUser, CountsType } from "@/data/definitions";
 import { useState } from "react";
@@ -27,7 +27,7 @@ export default function UserTable({ users, userOrgCounts }: { users: BaseUser[],
                                     actionPageLink={`/admin/users/${user.id}/roles`}
                                     count={userOrgCounts.find(uc => uc.id === user.id)?.count || 0} />
                                 <StdTabUpdInlBtn updatePageLink={`/admin/users/${user.id}/edit`} />
-                                <StdTabDelInlBtn 
+                                <StdTabDelStrInlBtn 
                                     id={user.id} 
                                     deleteAction={deleteUserAction} 
                                     onError={(msg: string) => setError(msg)} 

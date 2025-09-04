@@ -11,16 +11,14 @@ import RoleSelector from "@/components/role/RoleSelector";
 export default function Dashboard({ userOrgs: userOrgsIncoming }: { userOrgs: UserOrgRole[] }) {
     const { userOrgs, setUserOrgs, thisUserOrg, setThisUserOrg } = useContext(UserOrgContext);
 
-    console.log("Dashboard rendered with userOrgs:", userOrgsIncoming);
-
     useEffect(() => {
-        if (!userOrgs || userOrgs[0].userId !== userOrgsIncoming[0]?.userId) {
+        if (!userOrgs || userOrgs[0].userId !== userOrgsIncoming[0]?.userId || userOrgs.length !== userOrgsIncoming.length) {
             setUserOrgs(userOrgsIncoming);
         }
         if (!thisUserOrg) {
             setThisUserOrg(userOrgsIncoming[0]);
         }
-    }, [userOrgsIncoming, thisUserOrg]);
+    }, [userOrgsIncoming, thisUserOrg, setThisUserOrg, setUserOrgs, userOrgs]);
 
 
     return (
