@@ -19,24 +19,21 @@ export async function orgAction(prevState: any, formData: FormData) {
       throw new Error("Missing required fields");
     }
 
-    let clubIdNum: number | undefined;
-    let groupingIdNum: number | undefined;
+    let clubIdNum = null;
+    let groupingIdNum = null;
 
-    if (type === OrgType.CLUB) {
-      clubIdNum = undefined;
-      groupingIdNum = undefined;
-    } else if (type === OrgType.GROUPING) {
-      clubIdNum = clubId ? Number(clubId) : undefined;
+    if (type === OrgType.GROUPING) {
       if (!clubId) {
         throw new Error("There is an issue with how this grouping was created. Please contact your club admin.");
       }
-      groupingIdNum = undefined;
+      clubIdNum = Number(clubId);
+      groupingIdNum = null;
     } else if (type === OrgType.TEAM) {
-      clubIdNum = clubId ? Number(clubId) : undefined;
-      groupingIdNum = groupingId ? Number(groupingId) : undefined;
       if (!clubId || !groupingId) {
         throw new Error("There is an issue with how this team was created. Please contact your club admin.");
       }
+      clubIdNum = Number(clubId);
+      groupingIdNum = Number(groupingId);
     }
 
     if (id >= 0) {

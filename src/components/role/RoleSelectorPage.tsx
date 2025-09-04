@@ -31,7 +31,7 @@ export default function RoleSelectorPage({ userOrgsIncoming, forwardLink = '/hom
             console.log("RoleSelectorPage - Found thisUserOrg - forward directing", thisUserOrg, forwardLink);
             redirect(forwardLink);
         }
-    }, [userOrgsIncoming, thisUserOrg, setThisUserOrg, setUserOrgs, userOrgs]);
+    }, [userOrgsIncoming, thisUserOrg, setThisUserOrg, setUserOrgs, userOrgs, forwardLink]);
 
 
     function setSelUserOrg(value: string) {
