@@ -23,7 +23,6 @@ export default function ScheduleTable({ schedules }: { schedules: ScheduleList[]
               <StdTabTd>{schedule.name}</StdTabTd>
               <StdTabActionTd>
                 <StdTabNavInlBtn actionName="Blocks" actionPageLink={`/admin/schedules/${schedule.id}/blocks`} />
-                <StdTabCalInlBtn pageLink={`/admin/schedules/${schedule.id}/calendar`} />
                 <StdTabUpdInlBtn updatePageLink={`/admin/schedules/${schedule.id}/edit`} />
                 <StdTabDupInlBtn 
                   id={schedule.id} 

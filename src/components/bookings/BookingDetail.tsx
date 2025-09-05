@@ -45,7 +45,7 @@ export default function BookingDetail({ bookingRequest, bookingFacilities, booki
     const [isOrgAuthorised, setIsOrgAuthorised] = useState(false);
     useEffect(() => {
         setIsRoleAuthorised(thisUserOrg?.role === "Admin" || thisUserOrg?.role === "Editor");
-        setIsOrgAuthorised(userOrgs?.some(org => (org.clubId === bookingRequest.clubId || org.groupingId === bookingRequest.groupingId)) || false);
+        setIsOrgAuthorised(userOrgs?.some(org => (org.orgId === bookingRequest.clubId || org.orgId === bookingRequest.groupingId)) || false);
     }, [thisUserOrg, userOrgs, bookingRequest, setIsOrgAuthorised, setIsRoleAuthorised]);
 
     const [comment, setComment] = useState<string>("");
