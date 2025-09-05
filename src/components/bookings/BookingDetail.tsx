@@ -72,8 +72,7 @@ export default function BookingDetail({ bookingRequest, bookingFacilities, booki
             {bookingRequest.approverId && (
                 <StdFormInput name="approverDetails" label="Approver" type="text" defaultValue={bookingRequest.approverEmail ? bookingRequest.approverEmail : 'unknown'} readOnly />
             )}
-            <StdFormInput name="status" label="Status" type="text" defaultValue={bookingStatus} readOnly />
-
+            
             <StdFormDivider text="Facilities Requested" />
             <table className="w-full">
                 <thead>
@@ -123,6 +122,24 @@ export default function BookingDetail({ bookingRequest, bookingFacilities, booki
             }
 
             <StdFormDivider text="Update Booking" />
+            <div>
+                <label className="block text-sm font-medium mb-1" htmlFor="status">Status</label>
+                <input
+                    id="status"
+                    name="status"
+                    type="text"
+                    defaultValue={bookingStatus}
+                    className={`w-full border rounded px-3 py-2 ${
+                        bookingStatus === "Approved" ? "bg-green-500"
+                        : bookingStatus === "Rejected" ? "bg-red-500"
+                        : bookingStatus === "Withdrawn" ? "bg-yellow-500"
+                        : bookingStatus === "Requested" ? "bg-blue-500"
+                        : "bg-gray-500"
+                    }`}
+                    readOnly={true}
+                />
+            </div>
+
             <div className="mb-4">
                 <BookingInstructionsPanel showDetails={showDetails} setShowDetails={setShowDetails} />
             </div>

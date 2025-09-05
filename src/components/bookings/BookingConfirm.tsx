@@ -84,7 +84,7 @@ export function BookingConfirmSection({ facilities, authorisers, hideConfirmPage
                     </ul>
                     <StdFormButtonBar>
                         <StdFormClickBtn onClick={togglePages} label={"Back"} />
-                        <StdFormSubmitBtn disabled={slots.length === 0} > {"Next"} </StdFormSubmitBtn>
+                        <StdFormSubmitBtn disabled={slots.length === 0} > {"Submit"} </StdFormSubmitBtn>
                     </StdFormButtonBar>
                 </StdForm>
 
