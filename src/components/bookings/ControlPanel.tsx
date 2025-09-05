@@ -41,11 +41,12 @@ export function TimePeriodBtn({ label, startHour, setStartHour, endHour, setEndH
             type="button"
             className="
             px-2
-            text-xs font-medium text-center text-white shadow-md
-            bg-gray-200
+            text-xs font-medium text-center text-black shadow-md
+            bg-gray-500
             hover:bg-gray-400 
             focus:ring-2 focus:outline-none focus:ring-gray-300 
             dark:bg-blue-400 
+            dark:text-white
             dark:hover:bg-blue-500 
             dark:focus:ring-blue-600
             rounded"
