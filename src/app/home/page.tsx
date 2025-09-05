@@ -25,6 +25,7 @@ export default async function Page() {
 
     const userDbDetails = await getUserById(userAuthDetails.id);
     if (!userDbDetails || !userDbDetails.id) {
+        console.log(`User DB details not found or invalid: UserId: ${userAuthDetails.id}, Email: ${userAuthDetails.email}, Database details:`, userDbDetails);
         return (<RoleProblem type="userSetup" />)
     }
 
@@ -33,11 +34,11 @@ export default async function Page() {
         return (<RoleProblem type="roleSetup" />)
     }
 
-    console.log("Home Page - User authenticated, rendering dashboard: ", userOrgs);
+    console.log("Home Page - User authenticated, rendering dashboard - number of roles = ", userOrgs.length);
 
     return (
         <main>
-            <Dashboard userOrgs={userOrgs} />
+            <Dashboard userOrgsIncoming={userOrgs} />
         </main>
     );
 }

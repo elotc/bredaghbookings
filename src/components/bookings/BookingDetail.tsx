@@ -1,13 +1,14 @@
 "use client";
 
 import { BaseUser, BookingComment, BookingFacility, BookingRequest } from "@/data/definitions";
-import { StdFormCancelBtn, StdForm, StdFormInput, StdFormMetaText, StdFormSubmitBtn,  StdFormButtonBar, StdFormHidden, StdFormError, StdFormDivider, StdFormClickBtn } from "@/components/general/StdForm";
+import { StdFormCancelBtn, StdForm, StdFormInput, StdFormMetaText, StdFormSubmitBtn, StdFormButtonBar, StdFormHidden, StdFormError, StdFormDivider, StdFormClickBtn } from "@/components/general/StdForm";
 import { StdTabTh, StdTabTd } from "@/components/general/StdTable";
 
 import { useActionState, useContext, useEffect, useState } from "react";
 import { UserOrgContext } from "@/components/auth/UserOrgContext";
 import { updateBookingRequestAction } from "@/lib/bookings/BookingRequestActions";
 import { redirect } from "next/navigation";
+import BookingInstructionsPanel from "./BookingInstructionsPanel";
 
 
 export default function BookingDetail({ bookingRequest, bookingFacilities, bookingComments, requestor }
@@ -17,8 +18,8 @@ export default function BookingDetail({ bookingRequest, bookingFacilities, booki
 
     useEffect(() => {
         if (!thisUserOrg || !userOrgs) {
-            console.log("No user organization context, redirecting to role selection.");
-            redirect( "/auth/sign-in" );
+            console.log("No user organization context, redirecting to sign-in.");
+            redirect("/auth/sign-in");
         }
     }, [thisUserOrg, userOrgs, bookingRequest]);
 
@@ -48,6 +49,7 @@ export default function BookingDetail({ bookingRequest, bookingFacilities, booki
     }, [thisUserOrg, userOrgs, bookingRequest, setIsOrgAuthorised, setIsRoleAuthorised]);
 
     const [comment, setComment] = useState<string>("");
+    const [showDetails, setShowDetails] = useState<boolean>(false);
 
     return (
         <StdForm title={"Booking Request"} action={formAction}>
@@ -67,7 +69,7 @@ export default function BookingDetail({ bookingRequest, bookingFacilities, booki
             <StdFormInput name="description" label="Description" type="text" defaultValue={bookingRequest.description} readOnly />
             <StdFormInput name="requestorDetails" label="Requestor" type="text" defaultValue={requestorText} readOnly />
 
-            { bookingRequest.approverId && (
+            {bookingRequest.approverId && (
                 <StdFormInput name="approverDetails" label="Approver" type="text" defaultValue={bookingRequest.approverEmail ? bookingRequest.approverEmail : 'unknown'} readOnly />
             )}
             <StdFormInput name="status" label="Status" type="text" defaultValue={bookingStatus} readOnly />
@@ -121,27 +123,30 @@ export default function BookingDetail({ bookingRequest, bookingFacilities, booki
             }
 
             <StdFormDivider text="Update Booking" />
-            <StdFormInput name="comment" label="Add Comment" type="text" defaultValue={comment} onChange={setComment} required={false}/>
+            <div className="mb-4">
+                <BookingInstructionsPanel showDetails={showDetails} setShowDetails={setShowDetails} />
+            </div>
+
+            <StdFormInput name="comment" label="Add Comment" type="text" defaultValue={comment} onChange={setComment} required={false} />
 
             <StdFormButtonBar>
-                {
-                    isRoleAuthorised && isOrgAuthorised &&
-                    <>
-                        <StdFormClickBtn onClick={() => approveRequest("Approved")} label="Approve" disabled={bookingStatus !== "Requested"} />
-                        <StdFormClickBtn onClick={() => approveRequest("Rejected")} label="Reject" disabled={bookingStatus !== "Requested" || comment.length === 0} />
-                    </>
-                }
-                {
-                    thisUserOrg?.userId === bookingRequest.requestorId &&
-                    <>
-                        <StdFormClickBtn onClick={() => approveRequest("Withdrawn")} label="Withdraw" />
-                    </>
-                }
+                <StdFormClickBtn
+                    onClick={() => approveRequest("Approved")}
+                    label="Approve"
+                    disabled={!isOrgAuthorised || !isRoleAuthorised || bookingStatus !== "Requested"} />
+                <StdFormClickBtn
+                    onClick={() => approveRequest("Rejected")}
+                    label="Reject"
+                    disabled={!isOrgAuthorised || !isRoleAuthorised || bookingStatus !== "Requested" || comment.length === 0} />
+                <StdFormClickBtn
+                    onClick={() => approveRequest("Withdrawn")}
+                    label="Withdraw"
+                    disabled={thisUserOrg?.userId !== bookingRequest.requestorId || bookingStatus === "Withdrawn" || comment.length === 0} />
             </StdFormButtonBar>
 
             <StdFormButtonBar>
                 <StdFormCancelBtn backRef={`/bookings/${thisUserOrg?.userId}/${thisUserOrg?.orgId}`} />
-                <StdFormSubmitBtn disabled={false}> {"Submit"} </StdFormSubmitBtn>
+                <StdFormSubmitBtn disabled={originalStatus === bookingStatus && comment.length === 0}> {"Submit"} </StdFormSubmitBtn>
             </StdFormButtonBar>
 
             <StdFormMetaText label="Last Update At" value={bookingRequest?.updatedAt ? bookingRequest.updatedAt.toString() : ""} />

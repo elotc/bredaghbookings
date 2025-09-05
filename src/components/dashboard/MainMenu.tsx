@@ -28,7 +28,6 @@ export default function DashboardNav({ children }: { children?: React.ReactNode 
     return (
         <main>
             <div className="flex flex-1 flex-col justify-center items-center gap-4 px-2 py-8 sm:gap-8 sm:px-4">
-    
                  <MenuButton
                     type="six"
                     label="Calendar View"

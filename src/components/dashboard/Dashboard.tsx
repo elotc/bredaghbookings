@@ -1,14 +1,13 @@
 "use client";
 
 import { useContext, useEffect } from "react";
-import { roboto } from "@/components/general/fonts";
 import { UserOrgContext } from "@/components/auth/UserOrgContext";
 import { UserOrgRole } from "@/data/definitions";
 import MainMenu from "@/components/dashboard/MainMenu";
 import RoleSelector from "@/components/role/RoleSelector";
 
 
-export default function Dashboard({ userOrgs: userOrgsIncoming }: { userOrgs: UserOrgRole[] }) {
+export default function Dashboard({ userOrgsIncoming }: { userOrgsIncoming: UserOrgRole[] }) {
     const { userOrgs, setUserOrgs, thisUserOrg, setThisUserOrg } = useContext(UserOrgContext);
 
     useEffect(() => {
@@ -18,13 +17,14 @@ export default function Dashboard({ userOrgs: userOrgsIncoming }: { userOrgs: Us
         if (!thisUserOrg) {
             setThisUserOrg(userOrgsIncoming[0]);
         }
-    }, [userOrgsIncoming, thisUserOrg, setThisUserOrg, setUserOrgs, userOrgs]);
+    }, [userOrgsIncoming, thisUserOrg, userOrgs]);
 
+    if (!thisUserOrg) return (<p>Loading...</p>);
 
     return (
         <main className="flex min-h-screen">
             <div className="flex-1 p-2 mx-auto">
-                <p className={`${roboto.className} m-1 text-sm md:text-base`}>
+                <p className="m-1 text-sm md:text-base">
                     Welcome {thisUserOrg?.userName}
                 </p>
                 <RoleSelector />

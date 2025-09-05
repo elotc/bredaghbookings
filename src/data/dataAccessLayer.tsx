@@ -1,5 +1,5 @@
 import { db } from '@/data/dbConn';
-import { eq, lt, sql, and, inArray, lte, gte, or } from 'drizzle-orm';
+import { eq, lt, sql, and, inArray, lte, gte, or, desc } from 'drizzle-orm';
 import {
   users as usersTable,
   accounts as accountsTable,
@@ -502,7 +502,8 @@ export async function getFacilities() {
     scheduleName: schedule.name
   }).from(facility)
     .leftJoin(location, eq(facility.locationId, location.id))
-    .leftJoin(schedule, eq(facility.scheduleId, schedule.id))
+    .leftJoin(schedule, eq(facility.scheduleId, schedule.id));
+
   return facilities;
 }
 
@@ -838,7 +839,8 @@ export async function getBookingRequestsByTeamIds(teamIds: number[]) {
     .leftJoin(approvers, eq(booking_request.approverId, approvers.id))
     .where(
       inArray(booking_request.teamId, teamIds)
-    );
+    )
+    .orderBy(desc(booking_request.createdAt));
   return bookings;
 }
 
