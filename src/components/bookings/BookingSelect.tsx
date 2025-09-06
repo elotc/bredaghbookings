@@ -79,7 +79,7 @@ export default function BookingSelectSection({ blocks, bookings, facilities, hid
                     facilityId={selectedFacilityId}
                 />
                 <StdFormButtonBar>
-                    <StdFormCancelBtn backRef={`/bookings/${thisUserOrg.userId}`} />
+                    <StdFormCancelBtn backRef={`/bookings/${thisUserOrg.userId}/${thisUserOrg.orgId}/create`} />
                     <StdFormClickBtn onClick={togglePages} disabled={slots.length === 0} label={"Next"} />
                 </StdFormButtonBar>
             </div>
