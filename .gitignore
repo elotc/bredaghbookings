@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+nohup.out
 
 # next.js
 /.next/
