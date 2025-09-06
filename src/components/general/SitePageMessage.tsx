@@ -14,8 +14,8 @@ export default function SitePageMessage({
 }:
     { headline: string, message: string, label: string, link: string, isError?: boolean, actionBtnLabel?: string, btnAction?: () => void }) {
     return (
-        <div className="grid grid-cols-3 mt-40">
-            <div className="col-start-2 rounded-sm p-2 shadow-sm text-center">
+        <div className="m-10">
+            <div className="rounded-sm p-2 shadow-sm text-center">
                 <div className="flex flex-col items-center">
                     {!isError && <RxCheckCircled className="text-yellow-500 text-6xl" />}
                     {isError && <RxExclamationTriangle className="text-red-500 text-6xl" />}

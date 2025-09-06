@@ -144,8 +144,15 @@ export function StdTabBtnBar({ children }: { children: React.ReactNode }) {
     return (<div className="flex justify-between items-center my-6">{children}</div>);
 }
 
-export function StdTabTh({ children }: { children: React.ReactNode }) {
-    return <th className={thClass}>{children}</th>;
+export function StdTabTh({ displaySize = "lg", children }: { displaySize?: string, children: React.ReactNode }) {
+    // Tailwind responsive classes: sm, md, lg, xl, 2xl
+    // Show only at the specified breakpoint and above
+    // Example: displaySize="md" => hidden md:table-cell
+    return (
+        <th className={`${thClass} ${displaySize}:table-cell`}>
+            {children}
+        </th>
+    );
 }
 
 export function StdTabTd({ children }: { children: React.ReactNode }) {

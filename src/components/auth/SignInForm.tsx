@@ -21,8 +21,8 @@ export function SignInPage() {
 
     return (
         <main>
-            <div className="grid grid-cols-3">
-                <div className="col-start-2 rounded-sm bg-white-50 p-2 shadow-sm text-center">
+            <div className="m-10">
+                <div className="rounded-sm bg-white-50 p-2 shadow-sm text-center">
                     <div className="">
                         <h2 className="mb-4 text-xl font-bold md:text-2xl">
                             Sign In
